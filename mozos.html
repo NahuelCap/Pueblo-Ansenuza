@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seleccionar Mozo</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="imagenes/fondo.jpg">
+
+</head>
+
+<body class="con-fondo-secundario">
+
+<h1 class="titulo-cuadro">Seleccionar Mozo</h1>
+
+<div id="listaMozos"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyCL2GOoYrOC6Rt73oZ6VCGtqKz880ARSrI",
+authDomain: "app-restaurante-f2a8d.firebaseapp.com",
+databaseURL: "https://app-restaurante-f2a8d-default-rtdb.firebaseio.com",
+projectId: "app-restaurante-f2a8d"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const lista = document.getElementById("listaMozos");
+
+onValue(ref(db, "mesas"), (snapshot) => {
+
+lista.innerHTML = "";
+
+if (!snapshot.exists()) {
+    lista.innerHTML = "<p>No hay mozos activos</p>";
+    return;
+}
+
+snapshot.forEach(child => {
+
+    const mozo = child.key;
+
+    const btn = document.createElement("button");
+    btn.innerText = mozo;
+
+    btn.onclick = () => {
+    sessionStorage.setItem("mozoSeleccionado", mozo);
+    window.location.href = "mesas.html";
+    };
+
+    lista.appendChild(btn);
+
+});
+
+});
+</script>
+
+</body>
+</html>

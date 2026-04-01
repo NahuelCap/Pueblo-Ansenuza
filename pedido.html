@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedido</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="imagenes/fondo.jpg">
+
+</head>
+
+<body class="con-fondo-secundario">
+
+<h1 class="titulo-cuadro" id="mesa"></h1>
+
+<h2 class="titulo-cuadro">Menú</h2>
+
+<div id="categorias">
+<button onclick="mostrarCategoria('entradas')">Entradas</button>
+<button onclick="mostrarCategoria('infantil')">Infantil</button>
+<button onclick="mostrarCategoria('clasicos')">Clasicos</button>
+<button onclick="mostrarCategoria('pastas')">Pastas</button>
+<button onclick="mostrarCategoria('carnes')">Carnes</button>
+<button onclick="mostrarCategoria('pescados')">Pescados</button>
+<button onclick="mostrarCategoria('pollos')">Pollos</button>
+<button onclick="mostrarCategoria('pizzas')">Pizzas</button>
+<button onclick="mostrarCategoria('ensaladas')">Ensaladas</button>
+<button onclick="mostrarCategoria('postres')">Postres</button>
+<button onclick="mostrarCategoria('bebidasSinAlcohol')">Bebidas sin Alcohol</button>
+<button onclick="mostrarCategoria('cervezas')">Cervezas</button>
+<button onclick="mostrarCategoria('vinosBlancos')">Vinos Blancos</button>
+<button onclick="mostrarCategoria('vinosTintos')">Vinos Tintos</button>
+<button onclick="mostrarCategoria('espumantes')">Espumantes</button>
+<button onclick="mostrarCategoria('tragos')">Tragos</button>
+</div>
+
+<br>
+
+<div id="productos" style="
+display:flex;
+flex-wrap:wrap;
+gap:12px;
+justify-content:center;
+padding:10px;
+"></div>
+
+<hr>
+
+<h2 class="titulo-cuadro">Pedido</h2>
+
+<ul id="lista"></ul>
+
+<h3 class="titulo-cuadro" id="total">Total: $0</h3>
+
+<br>
+
+<button onclick="enviarPedido()">📤 Enviar Pedido</button>
+<button onclick="cerrarMesa()">💰 Cerrar mesa</button>
+
+<br><br>
+
+<a href="mesas.html">
+<button>⬅ Volver a mesas</button>
+</a>
+
+<script type="module" src="app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caja</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="imagenes/fondo.jpg">
+</head>
+
+<body class="con-fondo-secundario">
+
+<h1 class="titulo-cuadro">Caja - Pedidos</h1>
+
+<div class="titulo-cuadro" id="vistaMozos"></div>
+<div class="titulo-cuadro" id="pedidos"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue, remove, push, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCL2GOoYrOC6Rt73oZ6VCGtqKz880ARSrI",
+  authDomain: "app-restaurante-f2a8d.firebaseapp.com",
+  databaseURL: "https://app-restaurante-f2a8d-default-rtdb.firebaseio.com",
+  projectId: "app-restaurante-f2a8d",
+  storageBucket: "app-restaurante-f2a8d.firebasestorage.app",
+  messagingSenderId: "612743851779",
+  appId: "1:612743851779:web:51c37e51ef2d49eda24336"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const vistaMozos = document.getElementById("vistaMozos");
+const pedidosDiv = document.getElementById("pedidos");
+const pedidosRef = ref(db, "mesas");
+
+const menu = {
+  entradas:["Empanada Criolla o JyQ","Papas Fritas","Omelette","Provoleta a la Parrilla","Rabas a la Romana"],
+  infantil:["Tallarines","Milanesa con Fritas","Suprema con Fritas"],
+  clasicos:["Milanesa","Milanesa Napolitana","Suprema","Suprema Napolitana","Lomito","Lomo al Plato","Hamburguesa","Tostado","Sandwich Jamon Crudo y Rucula","Sandwich de Milanesa","Picada Caliente"],
+  pastas:["Tallarines","Ñoquis","Ravioles Carne y Verdura","Raviolones de Zapallo","Sorrentinos JyQ","Sorrentinos de Bondiola","Sorrentinos de Nutria"],
+  carnes:["Matambre de Cerdo","Churrasco de Cerdo","Costilla Banderita","Bife de Chorizo","Entraña","Bondiola de Cerdo","Osobuco al Disco","Parrilla 5 Cortes"],
+  pescados:["Pejerrey a la Romana","Pejerrey al Champignon o Roquefort","Peje-raba","Trucha al Champignon Criolla o Roquefort"],
+  pollos:["Patamuslo","Bife de Pollo","Pollo al Champignon"],
+  pizzas:["Muzzarella","Napolitana","Especial","Rucula y Jamon Crudo"],
+  ensaladas:["Rucula y Queso","Cesar","Completa"]
+};
+
+function mostrarMozos(snapshot) {
+  vistaMozos.innerHTML = "<h2>Mozos</h2>";
+  pedidosDiv.innerHTML = "";
+
+  if (!snapshot.exists()) {
+    vistaMozos.innerHTML += "<p>No hay pedidos cargados</p>";
+    return;
+  }
+
+  snapshot.forEach(function(child) {
+    const nombreMozo = child.key;
+
+    const boton = document.createElement("button");
+    boton.innerText = "Mozo: " + nombreMozo;
+    boton.onclick = function() {
+      mostrarMesasDeMozo(nombreMozo, child.val());
+    };
+
+    vistaMozos.appendChild(boton);
+  });
+}
+
+function mostrarMesasDeMozo(nombreMozo, mesasMozo) {
+  vistaMozos.innerHTML =
+    "<button onclick=\"volverAMozos()\">← Volver</button>" +
+    "<h2>Mesas de " + nombreMozo + "</h2>";
+
+  pedidosDiv.innerHTML = "";
+
+  for (const numeroMesa in mesasMozo) {
+    const pedido = mesasMozo[numeroMesa];
+    if (!pedido || typeof pedido !== "object") continue;
+
+    let productos = "";
+
+    if (Array.isArray(pedido.pedido)) {
+      pedido.pedido.forEach(function(p) {
+        productos += "<li>" + p.nombre + " - $" + p.precio + "</li>";
+      });
+    }
+
+    const div = document.createElement("div");
+
+    div.innerHTML =
+      "<h3>Mesa " + numeroMesa + "</h3>" +
+      "<p>Mozo: " + nombreMozo + "</p>" +
+      "<ul>" + productos + "</ul>" +
+      "<p><b>Total: $" + (pedido.total || 0) + "</b></p>" +
+      "<button onclick=\"imprimirComanda('" + nombreMozo + "','" + numeroMesa + "')\">Imprimir Comanda</button> " +
+      "<button onclick=\"cerrarMesa('" + nombreMozo + "','" + numeroMesa + "')\">Cobrar</button>" +
+      "<hr>";
+
+    pedidosDiv.appendChild(div);
+  }
+}
+
+window.volverAMozos = function() {
+  onValue(pedidosRef, function(snapshot) {
+    mostrarMozos(snapshot);
+  }, { onlyOnce: true });
+};
+
+onValue(pedidosRef, function(snapshot) {
+  mostrarMozos(snapshot);
+});
+
+window.imprimirComanda = async function(mozo, mesa) {
+
+  const mesaRef = ref(db, "mesas/" + mozo + "/" + mesa);
+  const snapshot = await get(mesaRef);
+
+  if (!snapshot.exists()) {
+    alert("No se encontro el pedido");
+    return;
+  }
+
+  const pedido = snapshot.val();
+  let textoProductos = "";
+
+  let productosCocina = [];
+  Object.values(menu).forEach(lista => {
+    lista.forEach(nombre => productosCocina.push(nombre));
+  });
+
+  pedido.pedido.forEach(function(p) {
+    if (!productosCocina.includes(p.nombre)) return;
+    textoProductos += "<div style='font-size:20px; margin-bottom:10px;'>" + p.nombre + (p.detalle ? " (" + p.detalle + ")" : "") + "</div>";
+  });
+
+  const html =
+  "<html><body style='font-family:monospace; text-align:center; padding:10px;'>" +
+  "<h2>COMANDA</h2>" +
+  "<h3>PUEBLO ANSENUZA</h3><br>" +
+  "<p>Mesa " + pedido.mesa + "</p>" +
+  "<p>Mozo: " + pedido.mozo + "</p><br><br>" +
+  textoProductos +
+  "<br><br><p>----- COCINA -----</p>"
+  ;
+
+  const ventana = window.open("", "", "width=300,height=600");
+  ventana.document.write(html);
+  ventana.document.close();
+  ventana.print();
+};
+
+window.cerrarMesa = async function(mozo, mesa) {
+
+const metodo = prompt(
+"Seleccione método de pago:\n\n1 - Efectivo\n2 - Débito\n3 - Crédito\n4 - Transferencia"
+);
+
+let metodoTexto = "";
+
+if(metodo == "1") metodoTexto = "Efectivo";
+else if(metodo == "2") metodoTexto = "Débito";
+else if(metodo == "3") metodoTexto = "Crédito";
+else if(metodo == "4") metodoTexto = "Transferencia";
+else {
+  alert("Método inválido");
+  return;
+}
+
+const mesaRef = ref(db, "mesas/" + mozo + "/" + mesa);
+const snapshot = await get(mesaRef);
+
+if (!snapshot.exists()) {
+  alert("No hay datos");
+  return;
+}
+
+const pedido = snapshot.val();
+
+let textoProductos = "";
+pedido.pedido.forEach(function(p) {
+  textoProductos += "<div style='margin-bottom:5px;'>" + p.nombre + " - $" + p.precio + "</div>";
+});
+
+const html =
+"<html><body style='font-family:monospace; text-align:center; padding:10px;'>" +
+
+"<h2>RESTAURANTE</h2>" +
+"<h3>PUEBLO ANSENUZA</h3>" +
+
+"<br>" +
+
+"<p>Mesa " + pedido.mesa + "</p>" +
+"<p>Mozo: " + pedido.mozo + "</p>" +
+
+"<br><br>" +
+
+"<div style='font-size:16px;'>" +
+textoProductos +
+"</div>" +
+
+"<br><br>" +
+
+"<p style='font-size:20px;'><b>Total: $" + pedido.total + "</b></p>" +
+"<p><b>Pago: " + metodoTexto + "</b></p>" +
+
+"<br>" +
+"<p>Gracias por su visita</p>"
+;
+
+const ventana = window.open("", "", "width=300,height=600");
+ventana.document.write(html);
+ventana.document.close();
+ventana.print();
+
+const fecha = new Date().toISOString().split("T")[0];
+const hora = new Date().getHours();
+const turno = hora < 17 ? "mediodia" : "noche";
+
+const venta = {
+  mesa: pedido.mesa,
+  mozo: pedido.mozo,
+  total: Number(pedido.total) || 0,
+  productos: pedido.pedido || [],
+  metodoPago: metodoTexto,
+  fecha: fecha,
+  turno: turno
+};
+
+await push(ref(db, "ventas/" + fecha), venta);
+await remove(mesaRef);
+
+alert("Mesa cobrada y cerrada");
+
+onValue(pedidosRef, function(snapshot) {
+  mostrarMozos(snapshot);
+}, { onlyOnce: true });
+
+};
+
+</script>
+
+</body>
+</html>

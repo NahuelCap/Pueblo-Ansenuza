@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mesas</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="imagenes/fondo.jpg">
+
+</head>
+<body class="con-fondo-secundario">
+
+  <h1 class="titulo-cuadro" id="tituloMozo">Mesas</h1>
+
+  <div class="mesas" id="contenedorMesas"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCL2GOoYrOC6Rt73oZ6VCGtqKz880ARSrI",
+      authDomain: "app-restaurante-f2a8d.firebaseapp.com",
+      databaseURL: "https://app-restaurante-f2a8d-default-rtdb.firebaseio.com",
+      projectId: "app-restaurante-f2a8d",
+      storageBucket: "app-restaurante-f2a8d.firebasestorage.app",
+      messagingSenderId: "612743851779",
+      appId: "1:612743851779:web:51c37e51ef2d49eda24336"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const mozo = sessionStorage.getItem("mozo") || sessionStorage.getItem("mozoSeleccionado");
+
+    const titulo = document.getElementById("tituloMozo");
+    const contenedor = document.getElementById("contenedorMesas");
+
+    if (!mozo) {
+      alert("No hay mozo seleccionado");
+      window.location.href = "index.html";
+    }
+
+    titulo.innerText = "Mesas de " + mozo;
+
+    window.abrirMesa = function(numero) {
+      sessionStorage.setItem("mesa", numero);
+      window.location.href = "pedido.html";
+    };
+
+    function renderizarMesas(datosMozo) {
+      contenedor.innerHTML = "";
+
+      for (let i = 1; i <= 32; i++) {
+        const boton = document.createElement("button");
+        boton.className = "mesa libre";
+        boton.innerText = "Mesa " + i;
+
+        boton.onclick = function() {
+          abrirMesa(i);
+        };
+
+        if (datosMozo && datosMozo[i]) {
+          boton.classList.remove("libre");
+          boton.classList.add("ocupada");
+        }
+
+        contenedor.appendChild(boton);
+      }
+    }
+
+    const mesasRef = ref(db, "mesas/" + mozo);
+
+    onValue(mesasRef, function(snapshot) {
+      if (snapshot.exists()) {
+        renderizarMesas(snapshot.val());
+      } else {
+        renderizarMesas({});
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Historial</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="imagenes/fondo.jpg">
+
+</head>
+
+<body class="con-fondo-secundario">
+
+<h1 class="titulo-cuadro">📊 Historial de Ventas</h1>
+
+<h2 class="titulo-cuadro">📅 Seleccionar fecha</h2>
+<input type="date" id="fecha">
+
+<h2 class="titulo-cuadro">💰 Total General</h2>
+<div class="titulo-cuadro" id="total"></div>
+
+<h2 class="titulo-cuadro">👨‍🍳 Ventas por mozo</h2>
+<div class="titulo-cuadro" id="mozos"></div>
+
+<a href="index.html">
+<button>⬅ Volver</button>
+</a>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyCL2GOoYrOC6Rt73oZ6VCGtqKz880ARSrI",
+authDomain: "app-restaurante-f2a8d.firebaseapp.com",
+databaseURL: "https://app-restaurante-f2a8d-default-rtdb.firebaseio.com",
+projectId: "app-restaurante-f2a8d"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const totalDiv = document.getElementById("total");
+const mozosDiv = document.getElementById("mozos");
+const fechaInput = document.getElementById("fecha");
+
+const hoy = new Date().toISOString().split("T")[0];
+fechaInput.value = hoy;
+
+function cargarHistorial(fechaSeleccionada){
+
+onValue(ref(db, "ventas"), (snapshot) => {
+
+let totalGeneral = 0;
+let totalPorMozo = {};
+
+if(!snapshot.exists()){
+totalDiv.innerText = "Total: $0";
+mozosDiv.innerText = "Sin ventas";
+return;
+}
+
+snapshot.forEach(fechaSnap => {
+
+const fecha = fechaSnap.key;
+
+if(fecha !== fechaSeleccionada) return;
+
+fechaSnap.forEach(ventaSnap => {
+
+    const venta = ventaSnap.val();
+
+    const total = Number(venta.total) || 0;
+    totalGeneral += total;
+
+    const mozo = venta.mozo || "Sin nombre";
+
+    if(!totalPorMozo[mozo]){
+    totalPorMozo[mozo] = 0;
+    }
+
+    totalPorMozo[mozo] += total;
+
+});
+
+});
+
+totalDiv.innerText = "Total: $" + totalGeneral;
+
+mozosDiv.innerHTML = "";
+
+if(Object.keys(totalPorMozo).length === 0){
+mozosDiv.innerHTML = "<p>Sin ventas</p>";
+return;
+}
+
+for(const mozo in totalPorMozo){
+mozosDiv.innerHTML += "<p>" + mozo + ": $" + totalPorMozo[mozo] + "</p>";
+}
+
+});
+
+}
+
+cargarHistorial(hoy);
+
+fechaInput.addEventListener("change", () => {
+cargarHistorial(fechaInput.value);
+});
+
+</script>
+
+</body>
+</html>

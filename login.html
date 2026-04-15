@@ -1,175 +1,36 @@
 <!DOCTYPE html>
-<html lang="es"><head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ingreso · Pueblo Ansenuza</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@300;400;500&amp;display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --cream: #F5EFE4; --warm: #E8D9C0; --sand: #C9A96E;
-      --brown: #7A4F2D; --dark: #1E1208; --charcoal: #2D1F10;
-      --muted: #9A8270; --error: #C0614A; --success: #4A6741;
-    }
-    html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(--cream); }
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Mozo</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="imagenes/fondo.jpg">
 
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background:
-        radial-gradient(ellipse at 30% 20%, rgba(122,79,45,.3) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 85%, rgba(74,103,65,.2) 0%, transparent 50%);
-      z-index: 0;
-    }
-
-    .page {
-      position: relative; z-index: 1;
-      min-height: 100vh;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 2rem 1.5rem;
-    }
-
-    .back-link {
-      position: fixed; top: 1.5rem; left: 1.5rem;
-      display: flex; align-items: center; gap: .4rem;
-      color: var(--muted); font-size: .82rem;
-      text-decoration: none; letter-spacing: .05em;
-      transition: color .2s;
-      z-index: 10;
-    }
-    .back-link:hover { color: var(--sand); }
-
-    .card {
-      width: 100%; max-width: 380px;
-      background: rgba(45,31,16,.6);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(201,169,110,.18);
-      border-radius: 20px;
-      padding: 2.5rem 2rem;
-      animation: fadeUp .7s ease both;
-    }
-
-    .card-header { text-align: center; margin-bottom: 2rem; }
-
-    .icon-wrap {
-      width: 60px; height: 60px;
-      border-radius: 50%;
-      background: rgba(201,169,110,.12);
-      border: 1px solid rgba(201,169,110,.25);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.6rem;
-      margin: 0 auto 1.2rem;
-    }
-
-    .card-header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.6rem; font-weight: 700;
-      color: var(--cream);
-    }
-    .card-header p { font-size: .82rem; color: var(--muted); margin-top: .3rem; }
-
-    .deco { width: 40px; height: 1px; background: var(--sand); margin: 1rem auto; opacity: .4; }
-
-    .field { margin-bottom: 1.2rem; }
-    label {
-      display: block;
-      font-size: .75rem; letter-spacing: .1em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: .5rem;
-    }
-    input, select {
-      width: 100%;
-      padding: .85rem 1rem;
-      background: rgba(30,18,8,.5);
-      border: 1px solid rgba(201,169,110,.18);
-      border-radius: 10px;
-      color: var(--cream);
-      font-family: 'DM Sans', sans-serif;
-      font-size: .95rem;
-      outline: none;
-      transition: border-color .2s, background .2s;
-      appearance: none;
-    }
-    select option { background: #2D1F10; }
-    input::placeholder { color: var(--muted); opacity: .5; }
-    input:focus, select:focus {
-      border-color: rgba(201,169,110,.5);
-      background: rgba(30,18,8,.7);
-    }
-
-    .btn {
-      width: 100%; margin-top: .5rem;
-      padding: .95rem;
-      background: var(--sand);
-      border: none; border-radius: 10px;
-      color: var(--dark);
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem; font-weight: 700;
-      letter-spacing: .05em;
-      cursor: pointer;
-      transition: background .2s, transform .15s;
-    }
-    .btn:hover { background: var(--warm); transform: translateY(-1px); }
-    .btn:active { transform: translateY(0); }
-
-    .msg {
-      margin-top: 1rem; padding: .75rem 1rem;
-      border-radius: 8px; font-size: .83rem;
-      text-align: center; display: none;
-    }
-    .msg.error  { background: rgba(192,97,74,.15); border: 1px solid rgba(192,97,74,.3); color: #E8907A; display: block; }
-    .msg.ok     { background: rgba(74,103,65,.15);  border: 1px solid rgba(74,103,65,.3);  color: #80B072; display: block; }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-  </style>
 </head>
-<body>
-  <a href="index.html" class="back-link">← Inicio</a>
 
-  <main class="page">
-    <div class="card">
-      <div class="card-header">
-        <div class="icon-wrap">👤</div>
-        <h1>Ingreso de Mozo</h1>
-        <p>Seleccioná tu usuario para comenzar</p>
-        <div class="deco"></div>
-      </div>
+<body class="con-fondo-secundario">
 
-      <div class="field">
-        <label>Mozo</label>
-        <select id="mozo">
-          <option value="">— Seleccioná un mozo —</option>
-          <option>Mozo 1</option>
-          <option>Mozo 2</option>
-          <option>Mozo 3</option>
-        </select>
-      </div>
+<h1 class="titulo-cuadro">Ingreso de Mozo</h1>
 
-      <button class="btn" onclick="handleLogin()">Entrar</button>
+<input id="nombre" placeholder="Nombre del mozo">
 
-      <div id="msg" class="msg"></div>
-    </div>
-  </main>
+<br><br>
 
-  <script>
-    function handleLogin() {
-      const mozo = document.getElementById('mozo').value;
-      const msg  = document.getElementById('msg');
-      msg.className = 'msg';
+<button onclick="entrar()">Entrar</button>
 
-      if (!mozo) {
-        msg.textContent = 'Seleccioná un mozo para continuar.';
-        msg.className = 'msg error';
-        return;
-      }
-      msg.textContent = '¡Bienvenido, ' + mozo + '! Redirigiendo...';
-      msg.className = 'msg ok';
-      setTimeout(() => { window.location.href = 'mozos.html'; }, 1200);
-    }
-  </script>
+<script>
+function entrar(){
+let nombre = document.getElementById("nombre").value.trim();
 
+if(nombre === ""){
+    alert("Ingrese nombre del Mozo");
+    return;
+}
 
-</body></html>
+sessionStorage.setItem("mozo", nombre);
+window.location.href = "mesas.html";
+}
+</script>
+
+</body>
+</html>

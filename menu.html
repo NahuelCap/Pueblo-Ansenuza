@@ -1,388 +1,200 @@
 <!DOCTYPE html>
-<html lang="es"><head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Administración · Pueblo Ansenuza</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=DM+Sans:wght@300;400;500&amp;display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --cream: #F5EFE4; --sand: #C9A96E; --dark: #1E1208;
-      --charcoal: #2D1F10; --muted: #9A8270; --border: rgba(201,169,110,.15);
-    }
-    html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(--cream); }
-    body::before {
-      content: ''; position: fixed; inset: 0;
-      background: radial-gradient(ellipse at 20% 10%, rgba(122,79,45,.25) 0%, transparent 55%);
-      z-index: 0;
-    }
-    .app { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
+<html>
 
-    header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1.2rem 1.5rem;
-      background: rgba(30,18,8,.75); backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      position: sticky; top: 0; z-index: 50;
-    }
-    .header-left { display: flex; align-items: center; gap: 1rem; }
-    .back-btn {
-      width: 36px; height: 36px; border-radius: 50%;
-      border: 1px solid rgba(201,169,110,.25);
-      background: transparent; color: var(--sand); cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      text-decoration: none; font-size: .9rem; transition: all .2s;
-    }
-    .back-btn:hover { background: rgba(201,169,110,.1); }
-    .header-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; }
-    .header-sub { font-size: .72rem; color: var(--muted); }
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editar precios</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/png" href="imagenes/fondo.jpg">
 
-    .add-btn {
-      display: flex; align-items: center; gap: .4rem;
-      padding: .55rem 1.1rem; border-radius: 50px;
-      background: var(--sand); border: none;
-      color: var(--dark); font-family: 'DM Sans', sans-serif;
-      font-size: .82rem; font-weight: 500; cursor: pointer;
-      transition: background .2s;
-    }
-    .add-btn:hover { background: #E8D9C0; }
-
-    /* Categorías */
-    .cats {
-      display: flex; gap: .5rem; overflow-x: auto; padding: 1rem 1.5rem;
-      border-bottom: 1px solid var(--border);
-      scrollbar-width: none;
-    }
-    .cats::-webkit-scrollbar { display: none; }
-
-    .cat {
-      flex-shrink: 0; padding: .45rem 1rem;
-      border-radius: 50px; border: 1px solid var(--border);
-      background: transparent; color: var(--muted);
-      font-family: 'DM Sans', sans-serif; font-size: .78rem;
-      cursor: pointer; transition: all .2s; white-space: nowrap;
-    }
-    .cat.active, .cat:hover {
-      background: rgba(201,169,110,.15); border-color: var(--sand); color: var(--sand);
-    }
-
-    /* Lista */
-    main { flex: 1; padding: 1rem 1.5rem 6rem; }
-
-    .product-item {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1rem 0;
-      border-bottom: 1px solid rgba(201,169,110,.08);
-      animation: fadeIn .3s ease both;
-    }
-    .product-item:last-child { border-bottom: none; }
-    .product-info { flex: 1; }
-    .product-name { font-size: .95rem; color: var(--cream); }
-    .product-cat { font-size: .72rem; color: var(--muted); margin-top: .15rem; }
-    .product-price {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1rem; color: var(--sand);
-      margin: 0 1rem;
-    }
-    .edit-btn {
-      width: 32px; height: 32px; border-radius: 8px;
-      border: 1px solid var(--border); background: transparent;
-      color: var(--muted); cursor: pointer; font-size: .85rem;
-      display: flex; align-items: center; justify-content: center;
-      transition: all .2s;
-    }
-    .edit-btn:hover { border-color: var(--sand); color: var(--sand); background: rgba(201,169,110,.08); }
-
-    /* Formulario flotante */
-    .overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(10,6,2,.75); backdrop-filter: blur(6px);
-      z-index: 200; align-items: flex-end; justify-content: center;
-    }
-    .overlay.active { display: flex; }
-    .form-panel {
-      width: 100%; max-width: 480px;
-      background: var(--charcoal);
-      border: 1px solid var(--border);
-      border-radius: 20px 20px 0 0;
-      padding: 1.5rem 1.5rem 2.5rem;
-      animation: slideUp .3s ease;
-    }
-    .form-handle {
-      width: 36px; height: 4px; border-radius: 2px;
-      background: rgba(201,169,110,.2); margin: 0 auto 1.4rem;
-    }
-    .form-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.2rem; margin-bottom: 1.4rem;
-    }
-    .field { margin-bottom: 1rem; }
-    label {
-      display: block; font-size: .72rem;
-      letter-spacing: .1em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: .45rem;
-    }
-    input, select {
-      width: 100%; padding: .8rem 1rem;
-      background: rgba(30,18,8,.5); border: 1px solid var(--border);
-      border-radius: 10px; color: var(--cream);
-      font-family: 'DM Sans', sans-serif; font-size: .95rem;
-      outline: none; transition: border-color .2s;
-      appearance: none;
-    }
-    select option { background: #2D1F10; }
-    input:focus, select:focus { border-color: rgba(201,169,110,.45); }
-
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
-
-    .save-btn {
-      width: 100%; margin-top: .5rem; padding: .9rem;
-      background: var(--sand); border: none; border-radius: 10px;
-      color: var(--dark); font-family: 'Playfair Display', serif;
-      font-size: .95rem; font-weight: 700; cursor: pointer;
-      transition: background .2s;
-    }
-    .save-btn:hover { background: #E8D9C0; }
-    .cancel-btn2 {
-      width: 100%; margin-top: .5rem; padding: .7rem;
-      background: transparent; border: none; color: var(--muted);
-      font-family: 'DM Sans', sans-serif; cursor: pointer; font-size: .85rem;
-    }
-
-    .toast {
-      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
-      background: #4A6741; color: white; border-radius: 50px;
-      padding: .65rem 1.4rem; font-size: .85rem;
-      opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 300;
-    }
-    .toast.show { opacity: 1; }
-
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    @keyframes fadeIn  { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
-  </style>
 </head>
-<body>
-<div class="app">
-  <header>
-    <div class="header-left">
-      <a href="index.html" class="back-btn">←</a>
-      <div>
-        <div class="header-title">Administración</div>
-        <div class="header-sub">Precios del menú</div>
-      </div>
-    </div>
-    <button class="add-btn" onclick="openForm()">➕ Agregar</button>
-  </header>
 
-  <div class="cats" id="cats"><button class="cat active" onclick="setCat('Todos')">Todos</button><button class="cat " onclick="setCat('Entradas')">Entradas</button><button class="cat " onclick="setCat('Infantil')">Infantil</button><button class="cat " onclick="setCat('Clásicos')">Clásicos</button><button class="cat " onclick="setCat('Pastas')">Pastas</button><button class="cat " onclick="setCat('Carnes')">Carnes</button><button class="cat " onclick="setCat('Pescados')">Pescados</button><button class="cat " onclick="setCat('Pollos')">Pollos</button><button class="cat " onclick="setCat('Pizzas')">Pizzas</button><button class="cat " onclick="setCat('Ensaladas')">Ensaladas</button><button class="cat " onclick="setCat('Postres')">Postres</button><button class="cat " onclick="setCat('Bebidas')">Bebidas</button><button class="cat " onclick="setCat('Cervezas')">Cervezas</button><button class="cat " onclick="setCat('Vinos Blancos')">Vinos Blancos</button><button class="cat " onclick="setCat('Vinos Tintos')">Vinos Tintos</button><button class="cat " onclick="setCat('Espumantes')">Espumantes</button><button class="cat " onclick="setCat('Tragos')">Tragos</button></div>
-  <main id="list">
-      <div class="product-item" style="animation-delay:0s">
-        <div class="product-info">
-          <div class="product-name">Empanadas (x6)</div>
-          <div class="product-cat">Entradas</div>
-        </div>
-        <div class="product-price">$3.200</div>
-        <button class="edit-btn" onclick="openForm(1)">✏️</button>
-      </div>
-    
-      <div class="product-item" style="animation-delay:0.04s">
-        <div class="product-info">
-          <div class="product-name">Nuggets de pollo</div>
-          <div class="product-cat">Infantil</div>
-        </div>
-        <div class="product-price">$2.800</div>
-        <button class="edit-btn" onclick="openForm(2)">✏️</button>
-      </div>
-    
-      <div class="product-item" style="animation-delay:0.08s">
-        <div class="product-info">
-          <div class="product-name">Milanesa napolitana</div>
-          <div class="product-cat">Clásicos</div>
-        </div>
-        <div class="product-price">$5.500</div>
-        <button class="edit-btn" onclick="openForm(3)">✏️</button>
-      </div>
-    
-      <div class="product-item" style="animation-delay:0.12s">
-        <div class="product-info">
-          <div class="product-name">Tallarines con tuco</div>
-          <div class="product-cat">Pastas</div>
-        </div>
-        <div class="product-price">$4.200</div>
-        <button class="edit-btn" onclick="openForm(4)">✏️</button>
-      </div>
-    
-      <div class="product-item" style="animation-delay:0.16s">
-        <div class="product-info">
-          <div class="product-name">Bife de chorizo</div>
-          <div class="product-cat">Carnes</div>
-        </div>
-        <div class="product-price">$7.800</div>
-        <button class="edit-btn" onclick="openForm(5)">✏️</button>
-      </div>
-    
-      <div class="product-item" style="animation-delay:0.2s">
-        <div class="product-info">
-          <div class="product-name">Trucha grillada</div>
-          <div class="product-cat">Pescados</div>
-        </div>
-        <div class="product-price">$6.900</div>
-        <button class="edit-btn" onclick="openForm(6)">✏️</button>
-      </div>
-    
-      <div class="product-item" style="animation-delay:0.24s">
-        <div class="product-info">
-          <div class="product-name">Pollo al disco</div>
-          <div class="product-cat">Pollos</div>
-        </div>
-        <div class="product-price">$5.200</div>
-        <button class="edit-btn" onclick="openForm(7)">✏️</button>
-      </div>
-    
-      <div class="product-item" style="animation-delay:0.28s">
-        <div class="product-info">
-          <div class="product-name">Pizza mozzarella</div>
-          <div class="product-cat">Pizzas</div>
-        </div>
-        <div class="product-price">$4.800</div>
-        <button class="edit-btn" onclick="openForm(8)">✏️</button>
-      </div>
-    
-      <div class="product-item" style="animation-delay:0.32s">
-        <div class="product-info">
-          <div class="product-name">Coca-Cola 1.5L</div>
-          <div class="product-cat">Bebidas</div>
-        </div>
-        <div class="product-price">$1.800</div>
-        <button class="edit-btn" onclick="openForm(9)">✏️</button>
-      </div>
-    
-      <div class="product-item" style="animation-delay:0.36s">
-        <div class="product-info">
-          <div class="product-name">Imperial 500cc</div>
-          <div class="product-cat">Cervezas</div>
-        </div>
-        <div class="product-price">$2.400</div>
-        <button class="edit-btn" onclick="openForm(10)">✏️</button>
-      </div>
-    </main>
+<body class="con-fondo-secundario">
+
+<h1 class="titulo-cuadro">Editar precios del menú</h1>
+
+<input type="text" id="buscador" placeholder="🔎 Buscar producto..." onkeyup="buscarProducto()">
+
+<br><br>
+
+<button onclick="mostrarFormulario()">➕ Agregar producto</button>
+
+<div id="formulario" style="display:none; margin-top:20px;">
+  
+  <input type="text" id="nuevoNombre" placeholder="Nombre del producto"><br><br>
+  <input type="number" id="nuevoPrecio" placeholder="Precio"><br><br>
+
+  <select id="nuevaCategoria">
+    <option value="entradas">Entradas</option>
+    <option value="infantil">Infantil</option>
+    <option value="clasicos">Clasicos</option>
+    <option value="pastas">Pastas</option>
+    <option value="carnes">Carnes</option>
+    <option value="pescados">Pescados</option>
+    <option value="pollos">Pollos</option>
+    <option value="pizzas">Pizzas</option>
+    <option value="ensaladas">Ensaladas</option>
+    <option value="postres">Postres</option>
+    <option value="bebidasSinAlcohol">Bebidas sin Alcohol</option>
+    <option value="cervezas">Cervezas</option>
+    <option value="vinosBlancos">Vinos Blancos</option>
+    <option value="vinosTintos">Vinos Tintos</option>
+    <option value="espumantes">Espumantes</option>
+    <option value="tragos">Tragos</option>
+  </select>
+
+  <br><br>
+
+  <button onclick="agregarProducto()">💾 Guardar producto</button>
 </div>
 
-<!-- Formulario -->
-<div class="overlay" id="overlay" onclick="closeFormOut(event)">
-  <div class="form-panel">
-    <div class="form-handle"></div>
-    <div class="form-title" id="form-title">Agregar producto</div>
-    <div class="form-row">
-      <div class="field">
-        <label>Nombre</label>
-        <input type="text" id="f-nombre" placeholder="Ej: Milanesa">
-      </div>
-      <div class="field">
-        <label>Precio $</label>
-        <input type="number" id="f-precio" placeholder="0">
-      </div>
-    </div>
-    <div class="field">
-      <label>Categoría</label>
-      <select id="f-cat"><option>Entradas</option><option>Infantil</option><option>Clásicos</option><option>Pastas</option><option>Carnes</option><option>Pescados</option><option>Pollos</option><option>Pizzas</option><option>Ensaladas</option><option>Postres</option><option>Bebidas</option><option>Cervezas</option><option>Vinos Blancos</option><option>Vinos Tintos</option><option>Espumantes</option><option>Tragos</option></select>
-    </div>
-    <button class="save-btn" onclick="saveProduct()">💾 Guardar</button>
-    <button class="cancel-btn2" onclick="closeForm()">Cancelar</button>
-  </div>
-</div>
+<br><br>
 
-<div class="toast" id="toast">✓ Guardado</div>
+<div id="productos"></div>
 
-<script>
-  const cats = ['Entradas','Infantil','Clásicos','Pastas','Carnes','Pescados','Pollos','Pizzas','Ensaladas','Postres','Bebidas','Cervezas','Vinos Blancos','Vinos Tintos','Espumantes','Tragos'];
+<br>
 
-  let products = [
-    { id:1, nombre:'Empanadas (x6)', cat:'Entradas', precio:3200 },
-    { id:2, nombre:'Nuggets de pollo', cat:'Infantil', precio:2800 },
-    { id:3, nombre:'Milanesa napolitana', cat:'Clásicos', precio:5500 },
-    { id:4, nombre:'Tallarines con tuco', cat:'Pastas', precio:4200 },
-    { id:5, nombre:'Bife de chorizo', cat:'Carnes', precio:7800 },
-    { id:6, nombre:'Trucha grillada', cat:'Pescados', precio:6900 },
-    { id:7, nombre:'Pollo al disco', cat:'Pollos', precio:5200 },
-    { id:8, nombre:'Pizza mozzarella', cat:'Pizzas', precio:4800 },
-    { id:9, nombre:'Coca-Cola 1.5L', cat:'Bebidas', precio:1800 },
-    { id:10, nombre:'Imperial 500cc', cat:'Cervezas', precio:2400 },
-  ];
+<a href="index.html">
+<button>⬅ Volver</button>
+</a>
 
-  let activeCat = 'Todos';
-  let editingId = null;
-  let nextId = 11;
+<script type="module">
 
-  function renderCats() {
-    const el = document.getElementById('cats');
-    const all = ['Todos', ...cats];
-    el.innerHTML = all.map(c =>
-      `<button class="cat ${c===activeCat?'active':''}" onclick="setCat('${c}')">${c}</button>`
-    ).join('');
-    // Populate select
-    document.getElementById('f-cat').innerHTML = cats.map(c=>`<option>${c}</option>`).join('');
-  }
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue, update, push, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-  function setCat(c) { activeCat = c; renderCats(); renderList(); }
+const firebaseConfig = {
+apiKey: "AIzaSyCL2GOoYrOC6Rt73oZ6VCGtqKz880ARSrI",
+authDomain: "app-restaurante-f2a8d.firebaseapp.com",
+databaseURL: "https://app-restaurante-f2a8d-default-rtdb.firebaseio.com",
+projectId: "app-restaurante-f2a8d",
+storageBucket: "app-restaurante-f2a8d.firebasestorage.app",
+messagingSenderId: "612743851779",
+appId: "1:612743851779:web:51c37e51ef2d49eda24336"
+};
 
-  function renderList() {
-    const filtered = activeCat === 'Todos' ? products : products.filter(p => p.cat === activeCat);
-    const el = document.getElementById('list');
-    if (!filtered.length) {
-      el.innerHTML = '<p style="color:var(--muted);font-size:.85rem;margin-top:2rem;text-align:center">Sin productos en esta categoría.</p>';
-      return;
-    }
-    el.innerHTML = filtered.map((p,i) => `
-      <div class="product-item" style="animation-delay:${i*.04}s">
-        <div class="product-info">
-          <div class="product-name">${p.nombre}</div>
-          <div class="product-cat">${p.cat}</div>
-        </div>
-        <div class="product-price">$${p.precio.toLocaleString('es-AR')}</div>
-        <button class="edit-btn" onclick="openForm(${p.id})">✏️</button>
-      </div>
-    `).join('');
-  }
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-  function openForm(id=null) {
-    editingId = id;
-    document.getElementById('form-title').textContent = id ? 'Editar producto' : 'Agregar producto';
-    if (id) {
-      const p = products.find(x => x.id === id);
-      document.getElementById('f-nombre').value = p.nombre;
-      document.getElementById('f-precio').value = p.precio;
-      document.getElementById('f-cat').value    = p.cat;
-    } else {
-      document.getElementById('f-nombre').value = '';
-      document.getElementById('f-precio').value = '';
-    }
-    document.getElementById('overlay').classList.add('active');
-  }
+const contenedor = document.getElementById("productos");
+const menuRef = ref(db,"menu");
 
-  function closeForm() { document.getElementById('overlay').classList.remove('active'); }
-  function closeFormOut(e) { if (e.target === document.getElementById('overlay')) closeForm(); }
+onValue(menuRef,(snapshot)=>{
 
-  function saveProduct() {
-    const nombre = document.getElementById('f-nombre').value.trim();
-    const precio = parseInt(document.getElementById('f-precio').value) || 0;
-    const cat    = document.getElementById('f-cat').value;
-    if (!nombre) return;
+const data = snapshot.val();
+contenedor.innerHTML="";
 
-    if (editingId) {
-      const p = products.find(x => x.id === editingId);
-      p.nombre = nombre; p.precio = precio; p.cat = cat;
-    } else {
-      products.push({ id: nextId++, nombre, cat, precio });
-    }
-    closeForm(); renderList();
-    const t = document.getElementById('toast');
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2000);
-  }
+for(const categoria in data){
 
-  renderCats(); renderList();
+const titulo = document.createElement("h2");
+titulo.textContent = categoria;
+contenedor.appendChild(titulo);
+
+const productos = data[categoria];
+
+for(const id in productos){
+
+const producto = productos[id];
+
+const div = document.createElement("div");
+div.className = "producto";
+
+const nombre = document.createElement("span");
+nombre.className = "nombreProducto";
+nombre.textContent = producto.nombre + " ";
+
+const input = document.createElement("input");
+input.type = "number";
+input.value = producto.precio;
+
+const boton = document.createElement("button");
+boton.textContent = "💾 Guardar";
+
+boton.onclick = function(){
+
+const nuevoPrecio = Number(input.value);
+
+update(ref(db,"menu/"+categoria+"/"+id),{
+precio:nuevoPrecio
+});
+
+alert("Precio actualizado");
+
+};
+
+const botonEliminar = document.createElement("button");
+botonEliminar.textContent = "❌ Eliminar";
+
+botonEliminar.onclick = function(){
+
+if(confirm("¿Eliminar producto?")){
+remove(ref(db,"menu/"+categoria+"/"+id));
+alert("Producto eliminado");
+}
+
+};
+
+// 👇 ACÁ ESTABA EL ERROR (faltaba esto)
+div.appendChild(nombre);
+div.appendChild(input);
+div.appendChild(boton);
+div.appendChild(botonEliminar); 
+contenedor.appendChild(div);
+
+}
+
+}
+
+});
+
+window.mostrarFormulario = function(){
+document.getElementById("formulario").style.display = "block";
+};
+
+window.agregarProducto = function(){
+
+const nombre = document.getElementById("nuevoNombre").value;
+const precio = Number(document.getElementById("nuevoPrecio").value);
+const categoria = document.getElementById("nuevaCategoria").value;
+
+if(nombre === "" || !precio){
+alert("Completa todos los campos");
+return;
+}
+
+push(ref(db,"menu/"+categoria),{
+nombre: nombre,
+precio: precio
+});
+
+alert("Producto agregado");
+
+document.getElementById("nuevoNombre").value = "";
+document.getElementById("nuevoPrecio").value = "";
+document.getElementById("formulario").style.display = "none";
+
+};
+
+window.buscarProducto = function(){
+
+const texto = document.getElementById("buscador").value.toLowerCase();
+const productos = document.querySelectorAll(".producto");
+
+productos.forEach(p => {
+
+const nombre = p.querySelector(".nombreProducto").innerText.toLowerCase();
+
+if(nombre.includes(texto)){
+p.style.display = "block";
+}else{
+p.style.display = "none";
+}
+
+});
+
+};
+
 </script>
 
-
-</body></html>
+</body>
+</html>

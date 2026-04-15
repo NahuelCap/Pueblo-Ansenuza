@@ -1,326 +1,42 @@
 <!DOCTYPE html>
-<html lang="es"><head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pueblo Ansenuza</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&amp;family=DM+Sans:wght@300;400;500&amp;display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --cream:    #F5EFE4;
-      --warm:     #E8D9C0;
-      --sand:     #C9A96E;
-      --brown:    #7A4F2D;
-      --dark:     #1E1208;
-      --charcoal: #2D1F10;
-      --green:    #4A6741;
-      --muted:    #9A8270;
-    }
-
-    html, body {
-      height: 100%;
-      font-family: 'DM Sans', sans-serif;
-      background: var(--dark);
-      color: var(--cream);
-      overflow-x: hidden;
-    }
-
-    /* ── Fondo con textura ── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background:
-        radial-gradient(ellipse at 20% 10%, rgba(122,79,45,.35) 0%, transparent 55%),
-        radial-gradient(ellipse at 85% 80%, rgba(74,103,65,.25) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(30,18,8,1) 0%, transparent 100%);
-      z-index: 0;
-    }
-
-    /* Grain overlay */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
-      opacity: .18;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .page {
-      position: relative;
-      z-index: 1;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1.5rem;
-    }
-
-    /* ── Header ── */
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.2rem 2.5rem;
-      background: rgba(30,18,8,.7);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(201,169,110,.15);
-      z-index: 100;
-    }
-
-    .brand-small {
-      font-family: 'Playfair Display', serif;
-      font-size: .95rem;
-      letter-spacing: .25em;
-      text-transform: uppercase;
-      color: var(--sand);
-      opacity: .85;
-    }
-
-    .login-btn {
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      padding: .5rem 1.2rem;
-      border: 1px solid rgba(201,169,110,.4);
-      border-radius: 50px;
-      background: transparent;
-      color: var(--sand);
-      font-family: 'DM Sans', sans-serif;
-      font-size: .82rem;
-      letter-spacing: .08em;
-      text-decoration: none;
-      transition: all .25s;
-    }
-    .login-btn:hover {
-      background: rgba(201,169,110,.12);
-      border-color: var(--sand);
-    }
-
-    /* ── Hero ── */
-    .hero {
-      text-align: center;
-      margin-bottom: 4rem;
-      animation: fadeUp .8s ease both;
-    }
-
-    .eyebrow {
-      font-size: .75rem;
-      letter-spacing: .4em;
-      text-transform: uppercase;
-      color: var(--sand);
-      margin-bottom: 1rem;
-      opacity: .7;
-    }
-
-    h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(3rem, 8vw, 6rem);
-      font-weight: 900;
-      line-height: .95;
-      letter-spacing: -.02em;
-      color: var(--cream);
-      margin-bottom: 1rem;
-    }
-
-    h1 span {
-      color: var(--sand);
-      display: block;
-    }
-
-    .subtitle {
-      font-size: .9rem;
-      color: var(--muted);
-      letter-spacing: .06em;
-      margin-top: 1.2rem;
-    }
-
-    /* ── Decorative line ── */
-    .deco-line {
-      width: 60px;
-      height: 1px;
-      background: var(--sand);
-      margin: 1.5rem auto;
-      opacity: .5;
-    }
-
-    /* ── Nav Cards ── */
-    .nav-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-      width: 100%;
-      max-width: 480px;
-      animation: fadeUp .9s .15s ease both;
-    }
-
-    .nav-card {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: flex-end;
-      padding: 1.6rem 1.5rem 1.4rem;
-      border-radius: 16px;
-      border: 1px solid rgba(201,169,110,.12);
-      background: rgba(45,31,16,.55);
-      backdrop-filter: blur(8px);
-      text-decoration: none;
-      overflow: hidden;
-      transition: transform .25s, border-color .25s, background .25s;
-      min-height: 130px;
-    }
-
-    .nav-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(201,169,110,.08) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity .25s;
-    }
-
-    .nav-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(201,169,110,.35);
-      background: rgba(55,38,20,.7);
-    }
-    .nav-card:hover::before { opacity: 1; }
-
-    .nav-card.wide {
-      grid-column: 1 / -1;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      min-height: 80px;
-    }
-
-    .card-icon {
-      font-size: 1.6rem;
-      margin-bottom: .8rem;
-      display: block;
-    }
-    .nav-card.wide .card-icon { margin-bottom: 0; font-size: 1.4rem; }
-
-    .card-label {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.05rem;
-      color: var(--cream);
-      font-weight: 700;
-    }
-
-    .card-desc {
-      font-size: .72rem;
-      color: var(--muted);
-      margin-top: .2rem;
-      letter-spacing: .03em;
-    }
-
-    .card-arrow {
-      color: var(--sand);
-      opacity: 0;
-      transform: translateX(-4px);
-      transition: all .25s;
-      font-size: 1rem;
-    }
-    .nav-card:hover .card-arrow { opacity: 1; transform: translateX(0); }
-
-    /* ── Footer ── */
-    footer {
-      margin-top: 3rem;
-      font-size: .7rem;
-      color: var(--muted);
-      letter-spacing: .1em;
-      text-align: center;
-      opacity: .5;
-      animation: fadeUp 1s .3s ease both;
-    }
-
-    /* ── Animaciones ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ── Responsive ── */
-    @media (max-width: 400px) {
-      .nav-grid { grid-template-columns: 1fr; }
-      .nav-card.wide { grid-column: 1; }
-    }
-  </style>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pueblo Ansenuza</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="imagenes/fondo.jpg">
 </head>
 <body>
 
-  <header>
-    <span class="brand-small">Pueblo Ansenuza</span>
-    <a href="login.html" class="login-btn">
-      <span>👤</span> Ingresar
-    </a>
-  </header>
+<div class="contenedor-principal">
 
-  <main class="page">
-    <div class="hero">
-      <p class="eyebrow">Sistema de gestión</p>
-      <h1>Pueblo<span>Ansenuza</span></h1>
-      <div class="deco-line"></div>
-      <p class="subtitle">Restaurante &amp; Parrilla</p>
+    <div class="panel-izquierdo">
+        <div class="logo-superior">
+            <img src="imagenes/fondo.jpg" alt="Logo Pueblo Ansenuza">
+            <h1>PUEBLO<br>ANSENUZA</h1>
+        </div>
+
+        <div class="menu-lateral">
+            <a href="caja.html" class="boton-menu">💰 Caja</a>
+            <a href="menu.html" class="boton-menu">⚙️ Administración</a>
+            <a href="mozos.html" class="boton-menu">🍽️ Mesas</a>
+            <a href="historial.html" class="boton-menu">📊 Historial</a>
+        </div>
     </div>
 
-    <nav class="nav-grid">
-      <a href="caja.html" class="nav-card">
-        <span class="card-icon">💰</span>
-        <div>
-          <div class="card-label">Caja</div>
-          <div class="card-desc">Pedidos activos</div>
+    <div class="contenido-derecho">
+        <div class="login-superior">
+            <a href="login.html">LOGIN</a>
+            <span class="icono-login">👤</span>
         </div>
-        <span class="card-arrow">→</span>
-      </a>
 
-      <a href="menu.html" class="nav-card">
-        <span class="card-icon">⚙️</span>
-        <div>
-          <div class="card-label">Administración</div>
-          <div class="card-desc">Precios y menú</div>
+        <div class="logo-central">
+            <img src="imagenes/fondo.jpg" alt="Logo central">
         </div>
-        <span class="card-arrow">→</span>
-      </a>
+    </div>
 
-      <a href="mozos.html" class="nav-card">
-        <span class="card-icon">🍽️</span>
-        <div>
-          <div class="card-label">Mesas</div>
-          <div class="card-desc">Estado del salón</div>
-        </div>
-        <span class="card-arrow">→</span>
-      </a>
+</div>
 
-      <a href="historial.html" class="nav-card">
-        <span class="card-icon">📊</span>
-        <div>
-          <div class="card-label">Historial</div>
-          <div class="card-desc">Ventas del día</div>
-        </div>
-        <span class="card-arrow">→</span>
-      </a>
-
-      <a href="login.html" class="nav-card wide">
-        <div>
-          <div class="card-label">Ingreso de mozos</div>
-          <div class="card-desc">Acceso al sistema de mesas</div>
-        </div>
-        <span class="card-arrow" style="opacity:1; transform:none; font-size:1.3rem;">→</span>
-      </a>
-    </nav>
-
-    <footer>© 2025 Pueblo Ansenuza · Sistema interno</footer>
-  </main>
-
-
-
-</body></html>
+</body>
+</html>

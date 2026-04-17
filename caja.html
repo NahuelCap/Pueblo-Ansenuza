@@ -6,14 +6,102 @@
 <title>Caja</title>
 <link rel="stylesheet" href="style.css">
 <link rel="icon" type="image/png" href="imagenes/fondo.jpg">
+<style>
+  .mozo-card {
+    display: inline-block;
+    background: rgba(35,26,18,0.8);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 20px;
+    margin: 6px;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    color: var(--cream);
+    transition: all 0.2s;
+    backdrop-filter: blur(6px);
+  }
+  .mozo-card:hover {
+    background: var(--gold-dim);
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+  .mesa-card {
+    background: rgba(35,26,18,0.75);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin: 10px auto;
+    max-width: 560px;
+    text-align: left;
+    backdrop-filter: blur(6px);
+  }
+  .mesa-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .mesa-card ul { margin: 10px 0; }
+  .mesa-card li {
+    border-color: rgba(200,169,110,0.08);
+    background: rgba(15,11,8,0.3);
+    font-size: 13px;
+  }
+  .total-mesa {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--cream);
+    margin-top: 10px;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+  }
+  .btn-accion {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 18px; margin: 4px;
+    border-radius: 10px; font-size: 13px;
+    font-weight: 500; cursor: pointer;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .btn-imprimir { background: rgba(61,107,58,0.2); border-color: rgba(61,107,58,0.4); color: #7DC47A; }
+  .btn-imprimir:hover { background: rgba(61,107,58,0.35); transform: translateY(-1px); }
+  .btn-cobrar { background: rgba(200,169,110,0.15); border-color: var(--gold-mid); color: var(--gold); }
+  .btn-cobrar:hover { background: rgba(200,169,110,0.28); transform: translateY(-1px); }
+
+  .turno-aviso {
+    background: rgba(184,80,64,0.15);
+    border: 1px solid rgba(184,80,64,0.35);
+    border-radius: 10px;
+    padding: 12px 18px;
+    color: #E08878;
+    font-size: 14px;
+    max-width: 500px;
+    margin: 10px auto;
+  }
+  .turno-activo-info {
+    background: rgba(61,107,58,0.12);
+    border: 1px solid rgba(61,107,58,0.3);
+    border-radius: 10px;
+    padding: 10px 16px;
+    color: #7DC47A;
+    font-size: 13px;
+    max-width: 500px;
+    margin: 10px auto;
+    font-family: 'Outfit', sans-serif;
+  }
+</style>
 </head>
 
 <body class="con-fondo-secundario">
 
-<h1 class="titulo-cuadro">Caja - Pedidos</h1>
+<a href="index.html" style="display:inline-block;margin:10px 0 0;padding:8px 16px;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:13px;text-decoration:none;">← Inicio</a>
 
+<h1 class="titulo-cuadro">💰 Caja — Pedidos</h1>
+
+<div id="turnoStatus"></div>
 <div class="titulo-cuadro" id="vistaMozos"></div>
-<div class="titulo-cuadro" id="pedidos"></div>
+<div id="pedidos"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -30,11 +118,27 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const db  = getDatabase(app);
 
-const vistaMozos = document.getElementById("vistaMozos");
-const pedidosDiv = document.getElementById("pedidos");
-const pedidosRef = ref(db, "mesas");
+const vistaMozos  = document.getElementById("vistaMozos");
+const pedidosDiv  = document.getElementById("pedidos");
+const turnoStatus = document.getElementById("turnoStatus");
+const pedidosRef  = ref(db, "mesas");
+
+let turnoActual = null;
+
+// Cargar turno activo
+get(ref(db, "turnoActivo")).then(snap => {
+  if (snap.exists()) {
+    turnoActual = snap.val();
+    turnoStatus.innerHTML =
+      '<div class="turno-activo-info">🟢 Turno activo: <b>' + turnoActual.nombre +
+      '</b> · Abierto a las ' + turnoActual.horaInicio + '</div>';
+  } else {
+    turnoStatus.innerHTML =
+      '<div class="turno-aviso">⚠️ No hay turno abierto. Abrí un turno desde el Inicio antes de cobrar.</div>';
+  }
+});
 
 const menu = {
   entradas:["Empanada Criolla o JyQ","Papas Fritas","Omelette","Provoleta a la Parrilla","Rabas a la Romana"],
@@ -49,198 +153,196 @@ const menu = {
 };
 
 function mostrarMozos(snapshot) {
-  vistaMozos.innerHTML = "<h2>Mozos</h2>";
+  vistaMozos.innerHTML = "<h2 style='margin-bottom:12px;font-size:18px;'>Mozos activos</h2>";
   pedidosDiv.innerHTML = "";
-
   if (!snapshot.exists()) {
-    vistaMozos.innerHTML += "<p>No hay pedidos cargados</p>";
+    vistaMozos.innerHTML += "<p style='color:var(--muted);font-size:14px;'>No hay pedidos cargados</p>";
     return;
   }
-
   snapshot.forEach(function(child) {
-    const nombreMozo = child.key;
-
-    const boton = document.createElement("button");
-    boton.innerText = "Mozo: " + nombreMozo;
-    boton.onclick = function() {
-      mostrarMesasDeMozo(nombreMozo, child.val());
-    };
-
-    vistaMozos.appendChild(boton);
+    const btn = document.createElement("button");
+    btn.className = "mozo-card";
+    btn.innerHTML = "👤 " + child.key;
+    btn.onclick = function() { mostrarMesasDeMozo(child.key, child.val()); };
+    vistaMozos.appendChild(btn);
   });
 }
 
 function mostrarMesasDeMozo(nombreMozo, mesasMozo) {
   vistaMozos.innerHTML =
-    "<button onclick=\"volverAMozos()\">← Volver</button>" +
-    "<h2>Mesas de " + nombreMozo + "</h2>";
-
+    "<button onclick=\"volverAMozos()\" style='margin-bottom:10px;'>← Volver</button>" +
+    "<h2 style='font-size:20px;'>Mesas de " + nombreMozo + "</h2>";
   pedidosDiv.innerHTML = "";
 
   for (const numeroMesa in mesasMozo) {
     const pedido = mesasMozo[numeroMesa];
     if (!pedido || typeof pedido !== "object") continue;
 
-    let productos = "";
-
+    let itemsHTML = "";
     if (Array.isArray(pedido.pedido)) {
       pedido.pedido.forEach(function(p) {
-        productos += "<li>" + p.nombre + " - $" + p.precio + "</li>";
+        itemsHTML += "<li>" + p.nombre +
+          (p.detalle ? " <em style='color:var(--muted);'>(" + p.detalle + ")</em>" : "") +
+          " x" + p.cantidad +
+          " <span style='float:right;color:var(--gold);'>$" + p.subtotal.toLocaleString('es-AR') + "</span></li>";
       });
     }
 
     const div = document.createElement("div");
-
+    div.className = "mesa-card";
     div.innerHTML =
       "<h3>Mesa " + numeroMesa + "</h3>" +
-      "<p>Mozo: " + nombreMozo + "</p>" +
-      "<ul>" + productos + "</ul>" +
-      "<p><b>Total: $" + (pedido.total || 0) + "</b></p>" +
-      "<button onclick=\"imprimirComanda('" + nombreMozo + "','" + numeroMesa + "')\">Imprimir Comanda</button> " +
-      "<button onclick=\"cerrarMesa('" + nombreMozo + "','" + numeroMesa + "')\">Cobrar</button>" +
-      "<hr>";
-
+      "<p style='font-size:13px;color:var(--muted);margin-bottom:8px;'>Mozo: " + nombreMozo + "</p>" +
+      "<ul>" + itemsHTML + "</ul>" +
+      "<p class='total-mesa'><b>Total: $" + Number(pedido.total || 0).toLocaleString('es-AR') + "</b></p>" +
+      "<div style='margin-top:12px;'>" +
+      "<button class='btn-accion btn-imprimir' onclick=\"imprimirComanda('" + nombreMozo + "','" + numeroMesa + "')\">🖨️ Comanda</button>" +
+      "<button class='btn-accion btn-cobrar'   onclick=\"cerrarMesa('"   + nombreMozo + "','" + numeroMesa + "')\">💳 Cobrar</button>" +
+      "</div>";
     pedidosDiv.appendChild(div);
   }
 }
 
 window.volverAMozos = function() {
-  onValue(pedidosRef, function(snapshot) {
-    mostrarMozos(snapshot);
-  }, { onlyOnce: true });
+  onValue(pedidosRef, function(snapshot) { mostrarMozos(snapshot); }, { onlyOnce: true });
 };
 
-onValue(pedidosRef, function(snapshot) {
-  mostrarMozos(snapshot);
-});
+onValue(pedidosRef, function(snapshot) { mostrarMozos(snapshot); });
 
+/* ── COMANDA ── */
 window.imprimirComanda = async function(mozo, mesa) {
-
-  const mesaRef = ref(db, "mesas/" + mozo + "/" + mesa);
-  const snapshot = await get(mesaRef);
-
-  if (!snapshot.exists()) {
-    alert("No se encontro el pedido");
-    return;
-  }
-
+  const snapshot = await get(ref(db, "mesas/" + mozo + "/" + mesa));
+  if (!snapshot.exists()) { alert("No se encontró el pedido"); return; }
   const pedido = snapshot.val();
-  let textoProductos = "";
 
   let productosCocina = [];
-  Object.values(menu).forEach(lista => {
-    lista.forEach(nombre => productosCocina.push(nombre));
-  });
+  Object.values(menu).forEach(lista => lista.forEach(n => productosCocina.push(n)));
 
+  let rows = "";
   pedido.pedido.forEach(function(p) {
     if (!productosCocina.includes(p.nombre)) return;
-    textoProductos += "<div style='font-size:20px; margin-bottom:10px;'>" + p.nombre + (p.detalle ? " (" + p.detalle + ")" : "") + "</div>";
+    rows += `<tr>
+      <td style="padding:8px 6px;font-size:17px;border-bottom:1px dashed #ccc;">
+        ${p.nombre}${p.detalle ? '<br><span style="font-size:13px;color:#777;">⚠ ' + p.detalle + '</span>' : ''}
+      </td>
+      <td style="padding:8px 6px;font-size:20px;font-weight:bold;text-align:right;border-bottom:1px dashed #ccc;">×${p.cantidad}</td>
+    </tr>`;
   });
 
-  const html =
-  "<html><body style='font-family:monospace; text-align:center; padding:10px;'>" +
-  "<h2>COMANDA</h2>" +
-  "<h3>PUEBLO ANSENUZA</h3><br>" +
-  "<p>Mesa " + pedido.mesa + "</p>" +
-  "<p>Mozo: " + pedido.mozo + "</p><br><br>" +
-  textoProductos +
-  "<br><br><p>----- COCINA -----</p>"
-  ;
+  const html = `<html><head><style>
+    body{font-family:'Courier New',monospace;background:white;color:#111;margin:0;padding:0;}
+    .ticket{max-width:320px;margin:0 auto;padding:20px 16px;}
+    .header{text-align:center;border-bottom:2px solid #111;padding-bottom:14px;margin-bottom:14px;}
+    .logo{font-size:22px;font-weight:bold;letter-spacing:2px;}
+    .sub{font-size:12px;letter-spacing:3px;color:#555;margin-top:2px;}
+    .tag{font-size:28px;font-weight:bold;letter-spacing:1px;margin:10px 0 4px;}
+    .info{font-size:13px;color:#444;}
+    table{width:100%;border-collapse:collapse;}
+    .footer{text-align:center;margin-top:16px;font-size:12px;color:#888;border-top:1px dashed #ccc;padding-top:12px;}
+  </style></head><body><div class="ticket">
+    <div class="header">
+      <div class="logo">PUEBLO ANSENUZA</div>
+      <div class="sub">RESTAURANTE</div>
+      <div class="tag">COMANDA</div>
+      <div class="info">Mesa <b>${pedido.mesa}</b> &nbsp;|&nbsp; Mozo: <b>${pedido.mozo}</b></div>
+      <div class="info" style="margin-top:4px;font-size:12px;">${new Date().toLocaleString('es-AR')}</div>
+    </div>
+    <table>${rows}</table>
+    <div class="footer">— COCINA —</div>
+  </div>`;
 
-  const ventana = window.open("", "", "width=300,height=600");
-  ventana.document.write(html);
-  ventana.document.close();
-  ventana.print();
+  const v = window.open("", "", "width=340,height=600");
+  v.document.write(html); v.document.close(); v.print();
 };
 
+/* ── COBRAR MESA — guarda turno activo ── */
 window.cerrarMesa = async function(mozo, mesa) {
+  const metodo = prompt("Método de pago:\n\n1 - Efectivo\n2 - Débito\n3 - Crédito\n4 - Transferencia");
+  const metodos = {"1":"Efectivo","2":"Débito","3":"Crédito","4":"Transferencia"};
+  const metodoTexto = metodos[metodo];
+  if (!metodoTexto) { alert("Método inválido"); return; }
 
-const metodo = prompt(
-"Seleccione método de pago:\n\n1 - Efectivo\n2 - Débito\n3 - Crédito\n4 - Transferencia"
-);
+  const mesaRef  = ref(db, "mesas/" + mozo + "/" + mesa);
+  const snapshot = await get(mesaRef);
+  if (!snapshot.exists()) { alert("No hay datos"); return; }
+  const pedido = snapshot.val();
 
-let metodoTexto = "";
+  // Obtener turno activo al momento de cobrar
+  const turnoSnap = await get(ref(db, "turnoActivo"));
+  const turno = turnoSnap.exists() ? turnoSnap.val() : null;
 
-if(metodo == "1") metodoTexto = "Efectivo";
-else if(metodo == "2") metodoTexto = "Débito";
-else if(metodo == "3") metodoTexto = "Crédito";
-else if(metodo == "4") metodoTexto = "Transferencia";
-else {
-  alert("Método inválido");
-  return;
-}
+  let rows = "";
+  pedido.pedido.forEach(function(p) {
+    rows += `<tr>
+      <td style="padding:6px 4px;font-size:14px;border-bottom:1px dashed #ddd;">${p.nombre}${p.detalle ? '<br><span style="font-size:11px;color:#888;">⚠ ' + p.detalle + '</span>' : ''}</td>
+      <td style="padding:6px 4px;text-align:center;border-bottom:1px dashed #ddd;">×${p.cantidad}</td>
+      <td style="padding:6px 4px;text-align:right;border-bottom:1px dashed #ddd;">$${p.subtotal.toLocaleString('es-AR')}</td>
+    </tr>`;
+  });
 
-const mesaRef = ref(db, "mesas/" + mozo + "/" + mesa);
-const snapshot = await get(mesaRef);
+  const iconos = {"Efectivo":"💵","Débito":"💳","Crédito":"🏦","Transferencia":"📲"};
+  const html = `<html><head><style>
+    body{font-family:'Courier New',monospace;background:white;color:#111;margin:0;padding:0;}
+    .ticket{max-width:320px;margin:0 auto;padding:20px 16px;}
+    .header{text-align:center;border-bottom:2px solid #111;padding-bottom:14px;margin-bottom:14px;}
+    .logo{font-size:22px;font-weight:bold;letter-spacing:2px;}
+    .sub{font-size:11px;letter-spacing:3px;color:#555;margin-top:2px;}
+    .info{font-size:13px;color:#444;margin-top:4px;}
+    table{width:100%;border-collapse:collapse;margin:10px 0;}
+    th{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#888;padding:4px;border-bottom:1px solid #111;}
+    .total-row td{font-size:18px;font-weight:bold;padding:12px 4px 4px;border-top:2px solid #111;}
+    .pago-box{text-align:center;margin:14px 0;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:15px;}
+    .footer{text-align:center;margin-top:16px;font-size:12px;color:#888;border-top:1px dashed #ccc;padding-top:12px;letter-spacing:1px;}
+  </style></head><body><div class="ticket">
+    <div class="header">
+      <div class="logo">PUEBLO ANSENUZA</div>
+      <div class="sub">RESTAURANTE</div>
+      <div class="info">Mesa <b>${pedido.mesa}</b> &nbsp;|&nbsp; Mozo: <b>${pedido.mozo}</b></div>
+      <div class="info" style="font-size:12px;">${new Date().toLocaleString('es-AR')}</div>
+      ${turno ? '<div class="info" style="font-size:11px;color:#888;">Turno ' + turno.nombre + '</div>' : ''}
+    </div>
+    <table>
+      <tr><th style="text-align:left;">Producto</th><th>Cant.</th><th style="text-align:right;">Precio</th></tr>
+      ${rows}
+      <tr class="total-row">
+        <td colspan="2">TOTAL</td>
+        <td style="text-align:right;">$${Number(pedido.total).toLocaleString('es-AR')}</td>
+      </tr>
+    </table>
+    <div class="pago-box">${iconos[metodoTexto]} Pago: <b>${metodoTexto}</b></div>
+    <div class="footer">¡Gracias por su visita!<br>Vuelva pronto 🙏</div>
+  </div>`;
 
-if (!snapshot.exists()) {
-  alert("No hay datos");
-  return;
-}
+  const v = window.open("", "", "width=340,height=700");
+  v.document.write(html); v.document.close(); v.print();
 
-const pedido = snapshot.val();
+  const fecha = new Date().toISOString().split("T")[0];
+  const hora  = new Date().getHours();
 
-let textoProductos = "";
-pedido.pedido.forEach(function(p) {
-  textoProductos += "<div style='margin-bottom:5px;'>" + p.nombre + " - $" + p.precio + "</div>";
-});
+  // Si hay turno activo, usar su ID y nombre; si no, calcular por hora
+  const turnoId     = turno ? turno.id     : (fecha + "_" + (hora < 17 ? "mediodia" : "noche"));
+  const turnoNombre = turno ? turno.nombre : (hora < 17 ? "Mediodía" : "Noche");
+  const turnoFecha  = turno ? turno.fecha  : fecha;
 
-const html =
-"<html><body style='font-family:monospace; text-align:center; padding:10px;'>" +
+  const venta = {
+    mesa:       pedido.mesa,
+    mozo:       pedido.mozo,
+    total:      Number(pedido.total) || 0,
+    productos:  pedido.pedido || [],
+    metodoPago: metodoTexto,
+    fecha:      fecha,
+    turnoId:    turnoId,
+    turnoNombre:turnoNombre,
+    turnoFecha: turnoFecha,
+    hora:       new Date().toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'})
+  };
 
-"<h2>RESTAURANTE</h2>" +
-"<h3>PUEBLO ANSENUZA</h3>" +
+  await push(ref(db, "ventas/" + turnoId), venta);
+  await remove(mesaRef);
+  alert("Mesa cobrada y cerrada ✓");
 
-"<br>" +
-
-"<p>Mesa " + pedido.mesa + "</p>" +
-"<p>Mozo: " + pedido.mozo + "</p>" +
-
-"<br><br>" +
-
-"<div style='font-size:16px;'>" +
-textoProductos +
-"</div>" +
-
-"<br><br>" +
-
-"<p style='font-size:20px;'><b>Total: $" + pedido.total + "</b></p>" +
-"<p><b>Pago: " + metodoTexto + "</b></p>" +
-
-"<br>" +
-"<p>Gracias por su visita</p>"
-;
-
-const ventana = window.open("", "", "width=300,height=600");
-ventana.document.write(html);
-ventana.document.close();
-ventana.print();
-
-const fecha = new Date().toISOString().split("T")[0];
-const hora = new Date().getHours();
-const turno = hora < 17 ? "mediodia" : "noche";
-
-const venta = {
-  mesa: pedido.mesa,
-  mozo: pedido.mozo,
-  total: Number(pedido.total) || 0,
-  productos: pedido.pedido || [],
-  metodoPago: metodoTexto,
-  fecha: fecha,
-  turno: turno
+  onValue(pedidosRef, function(snapshot) { mostrarMozos(snapshot); }, { onlyOnce: true });
 };
-
-await push(ref(db, "ventas/" + fecha), venta);
-await remove(mesaRef);
-
-alert("Mesa cobrada y cerrada");
-
-onValue(pedidosRef, function(snapshot) {
-  mostrarMozos(snapshot);
-}, { onlyOnce: true });
-
-};
-
 </script>
 
 </body>

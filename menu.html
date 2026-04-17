@@ -1,17 +1,15 @@
 <!DOCTYPE html>
-
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Editar precios</title>
 <link rel="stylesheet" href="style.css">
 <link rel="icon" type="image/png" href="imagenes/fondo.jpg">
-
 </head>
 
 <body class="con-fondo-secundario">
 
-<h1 class="titulo-cuadro">Editar precios del menú</h1>
+<h1 class="titulo-cuadro">⚙️ Editar precios del menú</h1>
 
 <input type="text" id="buscador" placeholder="🔎 Buscar producto..." onkeyup="buscarProducto()">
 
@@ -20,10 +18,8 @@
 <button onclick="mostrarFormulario()">➕ Agregar producto</button>
 
 <div id="formulario" style="display:none; margin-top:20px;">
-  
-  <input type="text" id="nuevoNombre" placeholder="Nombre del producto"><br><br>
+  <input type="text"   id="nuevoNombre" placeholder="Nombre del producto"><br><br>
   <input type="number" id="nuevoPrecio" placeholder="Precio"><br><br>
-
   <select id="nuevaCategoria">
     <option value="entradas">Entradas</option>
     <option value="infantil">Infantil</option>
@@ -42,158 +38,113 @@
     <option value="espumantes">Espumantes</option>
     <option value="tragos">Tragos</option>
   </select>
-
   <br><br>
-
   <button onclick="agregarProducto()">💾 Guardar producto</button>
 </div>
 
-<br><br>
+<br>
 
 <div id="productos"></div>
 
 <br>
 
-<a href="index.html">
-<button>⬅ Volver</button>
-</a>
+<a href="index.html"><button>⬅ Volver</button></a>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, onValue, update, push, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
-apiKey: "AIzaSyCL2GOoYrOC6Rt73oZ6VCGtqKz880ARSrI",
-authDomain: "app-restaurante-f2a8d.firebaseapp.com",
-databaseURL: "https://app-restaurante-f2a8d-default-rtdb.firebaseio.com",
-projectId: "app-restaurante-f2a8d",
-storageBucket: "app-restaurante-f2a8d.firebasestorage.app",
-messagingSenderId: "612743851779",
-appId: "1:612743851779:web:51c37e51ef2d49eda24336"
+  apiKey: "AIzaSyCL2GOoYrOC6Rt73oZ6VCGtqKz880ARSrI",
+  authDomain: "app-restaurante-f2a8d.firebaseapp.com",
+  databaseURL: "https://app-restaurante-f2a8d-default-rtdb.firebaseio.com",
+  projectId: "app-restaurante-f2a8d",
+  storageBucket: "app-restaurante-f2a8d.firebasestorage.app",
+  messagingSenderId: "612743851779",
+  appId: "1:612743851779:web:51c37e51ef2d49eda24336"
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const db  = getDatabase(app);
 
 const contenedor = document.getElementById("productos");
-const menuRef = ref(db,"menu");
+const menuRef    = ref(db, "menu");
 
-onValue(menuRef,(snapshot)=>{
+onValue(menuRef, (snapshot) => {
+  const data = snapshot.val();
+  contenedor.innerHTML = "";
 
-const data = snapshot.val();
-contenedor.innerHTML="";
+  for(const categoria in data){
+    const titulo = document.createElement("h2");
+    titulo.textContent = categoria.toUpperCase();
+    titulo.style.cssText = "margin:24px 0 10px;font-size:16px;letter-spacing:0.15em;color:var(--gold);border-bottom:1px solid var(--border);padding-bottom:8px;max-width:580px;margin-left:auto;margin-right:auto;text-align:left;";
+    contenedor.appendChild(titulo);
 
-for(const categoria in data){
+    const productos = data[categoria];
+    for(const id in productos){
+      const producto = productos[id];
+      const div = document.createElement("div");
+      div.className = "producto";
 
-const titulo = document.createElement("h2");
-titulo.textContent = categoria;
-contenedor.appendChild(titulo);
+      const nombre = document.createElement("span");
+      nombre.className = "nombreProducto";
+      nombre.textContent = producto.nombre;
 
-const productos = data[categoria];
+      const input = document.createElement("input");
+      input.type  = "number";
+      input.value = producto.precio;
+      input.style.cssText = "width:110px;text-align:right;";
 
-for(const id in productos){
+      const boton = document.createElement("button");
+      boton.innerHTML = "💾 Guardar";
+      boton.style.cssText = "background:rgba(61,107,58,0.2);border-color:rgba(61,107,58,0.4);color:#7DC47A;padding:8px 14px;font-size:13px;";
+      boton.onclick = function(){
+        update(ref(db,"menu/"+categoria+"/"+id),{ precio: Number(input.value) });
+        alert("Precio actualizado");
+      };
 
-const producto = productos[id];
+      const botonEliminar = document.createElement("button");
+      botonEliminar.innerHTML = "❌";
+      botonEliminar.style.cssText = "background:rgba(184,80,64,0.15);border-color:rgba(184,80,64,0.3);color:#E08878;padding:8px 12px;font-size:13px;";
+      botonEliminar.onclick = function(){
+        if(confirm("¿Eliminar producto?")){
+          remove(ref(db,"menu/"+categoria+"/"+id));
+          alert("Producto eliminado");
+        }
+      };
 
-const div = document.createElement("div");
-div.className = "producto";
-
-const nombre = document.createElement("span");
-nombre.className = "nombreProducto";
-nombre.textContent = producto.nombre + " ";
-
-const input = document.createElement("input");
-input.type = "number";
-input.value = producto.precio;
-
-const boton = document.createElement("button");
-boton.textContent = "💾 Guardar";
-
-boton.onclick = function(){
-
-const nuevoPrecio = Number(input.value);
-
-update(ref(db,"menu/"+categoria+"/"+id),{
-precio:nuevoPrecio
-});
-
-alert("Precio actualizado");
-
-};
-
-const botonEliminar = document.createElement("button");
-botonEliminar.textContent = "❌ Eliminar";
-
-botonEliminar.onclick = function(){
-
-if(confirm("¿Eliminar producto?")){
-remove(ref(db,"menu/"+categoria+"/"+id));
-alert("Producto eliminado");
-}
-
-};
-
-// 👇 ACÁ ESTABA EL ERROR (faltaba esto)
-div.appendChild(nombre);
-div.appendChild(input);
-div.appendChild(boton);
-div.appendChild(botonEliminar); 
-contenedor.appendChild(div);
-
-}
-
-}
-
+      div.appendChild(nombre);
+      div.appendChild(input);
+      div.appendChild(boton);
+      div.appendChild(botonEliminar);
+      contenedor.appendChild(div);
+    }
+  }
 });
 
 window.mostrarFormulario = function(){
-document.getElementById("formulario").style.display = "block";
+  document.getElementById("formulario").style.display = "block";
 };
 
 window.agregarProducto = function(){
-
-const nombre = document.getElementById("nuevoNombre").value;
-const precio = Number(document.getElementById("nuevoPrecio").value);
-const categoria = document.getElementById("nuevaCategoria").value;
-
-if(nombre === "" || !precio){
-alert("Completa todos los campos");
-return;
-}
-
-push(ref(db,"menu/"+categoria),{
-nombre: nombre,
-precio: precio
-});
-
-alert("Producto agregado");
-
-document.getElementById("nuevoNombre").value = "";
-document.getElementById("nuevoPrecio").value = "";
-document.getElementById("formulario").style.display = "none";
-
+  const nombre    = document.getElementById("nuevoNombre").value;
+  const precio    = Number(document.getElementById("nuevoPrecio").value);
+  const categoria = document.getElementById("nuevaCategoria").value;
+  if(nombre === "" || !precio){ alert("Completa todos los campos"); return; }
+  push(ref(db,"menu/"+categoria),{ nombre, precio });
+  alert("Producto agregado");
+  document.getElementById("nuevoNombre").value = "";
+  document.getElementById("nuevoPrecio").value = "";
+  document.getElementById("formulario").style.display = "none";
 };
 
 window.buscarProducto = function(){
-
-const texto = document.getElementById("buscador").value.toLowerCase();
-const productos = document.querySelectorAll(".producto");
-
-productos.forEach(p => {
-
-const nombre = p.querySelector(".nombreProducto").innerText.toLowerCase();
-
-if(nombre.includes(texto)){
-p.style.display = "block";
-}else{
-p.style.display = "none";
-}
-
-});
-
+  const texto = document.getElementById("buscador").value.toLowerCase();
+  document.querySelectorAll(".producto").forEach(p => {
+    const nombre = p.querySelector(".nombreProducto").innerText.toLowerCase();
+    p.style.display = nombre.includes(texto) ? "flex" : "none";
+  });
 };
-
 </script>
 
 </body>

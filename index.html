@@ -10,45 +10,34 @@
     .turno-panel {
       position: absolute;
       bottom: 28px; left: 0; right: 0;
-      display: flex;
-      justify-content: center;
-      padding: 0 20px;
-      z-index: 10;
+      display: flex; justify-content: center;
+      padding: 0 20px; z-index: 10;
     }
     .turno-card {
       background: rgba(35,26,18,0.88);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px 22px;
+      border-radius: 16px; padding: 18px 22px;
       max-width: 380px; width: 100%;
       backdrop-filter: blur(14px);
       box-shadow: 0 12px 40px rgba(0,0,0,0.4);
     }
     .turno-card-header {
       display: flex; align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
+      justify-content: space-between; margin-bottom: 14px;
     }
-    .turno-label {
-      font-size: 11px; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--muted);
-    }
-    .turno-badge {
-      display: flex; align-items: center; gap: 6px;
-      padding: 4px 12px; border-radius: 50px;
-      font-size: 12px; font-weight: 600;
-    }
-    .turno-badge.activo  { background:rgba(61,107,58,0.2); border:1px solid rgba(61,107,58,0.45); color:#7DC47A; }
-    .turno-badge.cerrado { background:rgba(200,169,110,0.08); border:1px solid var(--border); color:var(--muted); }
-    .turno-info { font-family:'Cormorant Garamond',serif; font-size:17px; color:var(--cream); margin-bottom:14px; min-height:24px; }
-    .turno-info span { color: var(--gold); }
-    .turno-acciones { display:flex; gap:8px; }
+    .turno-label { font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted); }
+    .turno-badge { display:flex;align-items:center;gap:6px;padding:4px 12px;border-radius:50px;font-size:12px;font-weight:600; }
+    .turno-badge.activo  { background:rgba(61,107,58,0.2);border:1px solid rgba(61,107,58,0.45);color:#7DC47A; }
+    .turno-badge.cerrado { background:rgba(200,169,110,0.08);border:1px solid var(--border);color:var(--muted); }
+    .turno-info { font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--cream);margin-bottom:14px;min-height:24px; }
+    .turno-info span { color:var(--gold); }
+    .turno-acciones { display:flex;gap:8px; }
     .btn-abrir  { flex:1;padding:11px!important;font-size:13px!important;background:rgba(61,107,58,0.2)!important;border-color:rgba(61,107,58,0.4)!important;color:#7DC47A!important;border-radius:10px!important;margin:0!important;font-weight:600!important; }
     .btn-cerrar { flex:1;padding:11px!important;font-size:13px!important;background:rgba(184,80,64,0.18)!important;border-color:rgba(184,80,64,0.4)!important;color:#E08878!important;border-radius:10px!important;margin:0!important;font-weight:600!important; }
     .dot-anim { width:7px;height:7px;border-radius:50%;background:#7DC47A;animation:pulse 1.8s infinite; }
     @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);} }
     @media (max-width:768px) {
-      .turno-panel { position:static; padding:16px 14px; }
+      .turno-panel { position:static;padding:16px 14px; }
       .contenido-derecho { display:flex;flex-direction:column;justify-content:center;align-items:center; }
     }
   </style>
@@ -111,13 +100,13 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db  = getDatabase(app);
-const badge    = document.getElementById("turnoBadge");
-const info     = document.getElementById("turnoInfo");
-const btnAbrir = document.getElementById("btnAbrir");
-const btnCerrar= document.getElementById("btnCerrar");
+const badge     = document.getElementById("turnoBadge");
+const info      = document.getElementById("turnoInfo");
+const btnAbrir  = document.getElementById("btnAbrir");
+const btnCerrar = document.getElementById("btnCerrar");
 
 async function cargarEstado() {
-  const snap = await get(ref(db, "turnoActivo"));
+  const snap = await get(ref(db,"turnoActivo"));
   snap.exists() ? mostrarActivo(snap.val()) : mostrarCerrado();
 }
 
@@ -143,26 +132,42 @@ window.abrirTurno = async function() {
   const fecha   = ahora.toISOString().split("T")[0];
   const horaStr = ahora.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
   const turnoId = fecha + "_" + nombre.toLowerCase().replace("í","i");
-  const turno   = { id:turnoId, nombre, fecha, horaInicio:horaStr, timestamp:Date.now() };
+
+  const turno = {
+    id:          turnoId,
+    nombre:      nombre,
+    fecha:       fecha,
+    horaInicio:  horaStr,
+    timestamp:   Date.now()
+  };
+
   await set(ref(db,"turnoActivo"), turno);
+  // Guardar también en el registro de turnos para el historial
+  await set(ref(db,"turnos/" + turnoId), turno);
+
   mostrarActivo(turno);
   toast("Turno " + nombre + " abierto a las " + horaStr, "success");
 };
 
 window.cerrarTurno = async function() {
   const snap = await get(ref(db,"turnoActivo"));
-  if (!snap.exists()) return;
+  if(!snap.exists()) return;
   const t = snap.val();
   const ahora   = new Date();
   const horaStr = ahora.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+
   const ok = await modalConfirm(
     "Turno <b>" + t.nombre + "</b> abierto a las <b>" + t.horaInicio + "</b><br>Son las <b>" + horaStr + "</b>",
-    "🌙", "¿Cerrar turno?", true
+    "🌙","¿Cerrar turno?", true
   );
-  if (!ok) return;
+  if(!ok) return;
+
+  // Guardar hora de cierre en el registro del turno
+  await set(ref(db,"turnos/" + t.id + "/horaCierre"), horaStr);
+
   await remove(ref(db,"turnoActivo"));
   mostrarCerrado();
-  toast("Turno " + t.nombre + " cerrado ✓", "info");
+  toast("Turno " + t.nombre + " cerrado a las " + horaStr + " ✓","info");
 };
 
 cargarEstado();

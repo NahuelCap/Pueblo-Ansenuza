@@ -11,58 +11,65 @@
   .tab-btn.activo { background:var(--gold-dim);border-color:var(--gold);color:var(--cream); }
   .filtros { display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:14px auto 0; }
   .filtros label { font-size:13px;color:var(--muted); }
+
   .turno-item {
     background:rgba(35,26,18,0.7); border:1px solid var(--border);
     border-radius:12px; padding:14px 18px; margin:8px auto; max-width:480px;
     cursor:pointer; transition:all 0.2s;
-    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
     backdrop-filter:blur(6px);
   }
   .turno-item:hover { border-color:var(--gold-mid);transform:translateX(2px); }
   .turno-nombre { font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--cream); }
-  .turno-fecha  { font-size:12px;color:var(--muted);margin-top:2px; }
+  .turno-meta   { font-size:12px;color:var(--muted);margin-top:3px;line-height:1.6; }
   .turno-total  { font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);white-space:nowrap; }
+
+  /* Horario del turno en detalle */
+  .turno-horario {
+    background: rgba(200,169,110,0.07);
+    border: 1px solid rgba(200,169,110,0.18);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 10px auto;
+    max-width: 480px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .horario-bloque { text-align:center; }
+  .horario-label  { font-size:11px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase; }
+  .horario-hora   { font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);font-weight:700;line-height:1; }
+  .horario-fecha  { font-size:12px;color:var(--muted);margin-top:2px; }
+  .horario-sep    { font-size:20px;color:var(--border); }
+
   .stat-grid { display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px auto;max-width:600px; }
   .stat-card { background:rgba(35,26,18,0.8);border:1px solid var(--border);border-radius:14px;padding:16px 18px;text-align:center;flex:1;min-width:110px;backdrop-filter:blur(8px); }
-  .stat-num   { font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--gold);line-height:1; }
-  .stat-label { font-size:11px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-top:6px; }
+  .stat-num  { font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--gold);line-height:1; }
+  .stat-label{ font-size:11px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-top:6px; }
+
   .metodos-grid { display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px auto;max-width:520px; }
-  .metodo-card { background:rgba(35,26,18,0.65);border:1px solid var(--border);border-radius:12px;padding:12px 16px;text-align:center;flex:1;min-width:95px; }
+  .metodo-card  { background:rgba(35,26,18,0.65);border:1px solid var(--border);border-radius:12px;padding:12px 16px;text-align:center;flex:1;min-width:95px; }
   .metodo-icono { font-size:20px;margin-bottom:4px; }
   .metodo-monto { font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--cream); }
   .metodo-label { font-size:11px;color:var(--muted);margin-top:2px; }
+
   .mozo-row { display:flex;align-items:center;justify-content:space-between;background:rgba(35,26,18,0.7);border:1px solid var(--border);border-radius:10px;padding:12px 18px;margin:7px auto;max-width:440px; }
   .mozo-nombre { font-size:15px;color:var(--cream); }
   .mozo-total  { font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold); }
+
   .seccion-h { font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--gold);margin:18px auto 8px;max-width:480px;padding-bottom:6px;border-bottom:1px solid var(--border);text-align:left;padding-left:4px; }
+
+  .top-producto { background:rgba(200,169,110,0.08);border:1px solid rgba(200,169,110,0.2);border-radius:14px;padding:14px 18px;margin:10px auto;max-width:480px;display:flex;align-items:center;gap:14px; }
+  .top-trofeo { font-size:28px; }
+  .top-nombre { font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--cream); }
+  .top-cant   { font-size:13px;color:var(--gold);margin-top:2px; }
+
+  .btn-exportar { display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:50px;background:rgba(200,169,110,0.12);border:1px solid var(--gold-mid);color:var(--gold);font-size:14px;font-weight:500;cursor:pointer;margin:6px;transition:all 0.2s; }
+  .btn-exportar:hover { background:rgba(200,169,110,0.22);transform:translateY(-1px); }
   .volver-btn { display:inline-block;margin:6px;padding:8px 16px;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:13px;cursor:pointer;background:transparent;transition:all 0.2s; }
   .volver-btn:hover { color:var(--cream);border-color:var(--gold-mid); }
-
-  /* Producto más vendido */
-  .top-producto {
-    background:rgba(200,169,110,0.08);
-    border:1px solid rgba(200,169,110,0.2);
-    border-radius:14px; padding:14px 18px;
-    margin:10px auto; max-width:480px;
-    display:flex;align-items:center;gap:14px;
-    backdrop-filter:blur(6px);
-  }
-  .top-trofeo { font-size:28px; }
-  .top-info { flex:1; }
-  .top-nombre  { font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--cream); }
-  .top-cant    { font-size:13px;color:var(--gold);margin-top:2px; }
-
-  /* Botón exportar */
-  .btn-exportar {
-    display:inline-flex;align-items:center;gap:8px;
-    padding:10px 20px;border-radius:50px;
-    background:rgba(200,169,110,0.12);
-    border:1px solid var(--gold-mid);
-    color:var(--gold);font-size:14px;font-weight:500;
-    cursor:pointer;margin:10px 6px;
-    transition:all 0.2s;
-  }
-  .btn-exportar:hover { background:rgba(200,169,110,0.22);transform:translateY(-1px); }
 </style>
 </head>
 <body class="con-fondo-secundario">
@@ -80,14 +87,13 @@
 </div>
 
 <div id="contenido"></div>
-
 <br>
 <a href="index.html"><button class="volver-btn">⬅ Volver</button></a>
 
 <script src="toast.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   apiKey:"AIzaSyCL2GOoYrOC6Rt73oZ6VCGtqKz880ARSrI",
@@ -104,11 +110,19 @@ const fechaInput = document.getElementById("fecha");
 const hoy        = new Date().toISOString().split("T")[0];
 fechaInput.value = hoy;
 
-let tabActual   = "turnos";
-let todasVentas = {};
+let tabActual    = "turnos";
+let todasVentas  = {};
+let todosTurnos  = {}; // registro de turnos con horarios
 
+// Cargar ventas
 onValue(ref(db,"ventas"), (snapshot) => {
   todasVentas = snapshot.exists() ? snapshot.val() : {};
+  renderTab();
+});
+
+// Cargar registro de turnos (horarios)
+onValue(ref(db,"turnos"), (snapshot) => {
+  todosTurnos = snapshot.exists() ? snapshot.val() : {};
   renderTab();
 });
 
@@ -132,23 +146,36 @@ function renderTurnos() {
   if(Object.keys(todasVentas).length===0){
     contenido.innerHTML="<p style='color:var(--muted);font-size:14px;margin-top:20px;'>Sin ventas registradas</p>"; return;
   }
+
   const turnos = {};
   Object.entries(todasVentas).forEach(([turnoId,ventasDelTurno])=>{
     Object.values(ventasDelTurno).forEach(v=>{
-      if(!turnos[turnoId]) turnos[turnoId]={ id:turnoId,nombre:v.turnoNombre||"Turno",fecha:v.turnoFecha||v.fecha||"—",ventas:[] };
+      if(!turnos[turnoId]) turnos[turnoId]={ id:turnoId, nombre:v.turnoNombre||"Turno", fecha:v.turnoFecha||v.fecha||"—", ventas:[] };
       turnos[turnoId].ventas.push(v);
     });
   });
+
   const ordenados = Object.values(turnos).sort((a,b)=>b.id.localeCompare(a.id));
-  if(ordenados.length===0){ contenido.innerHTML="<p style='color:var(--muted);font-size:14px;margin-top:20px;'>Sin turnos registrados</p>"; return; }
+  if(ordenados.length===0){ contenido.innerHTML="<p style='color:var(--muted);'>Sin turnos</p>"; return; }
+
   ordenados.forEach(turno=>{
-    const total = turno.ventas.reduce((s,v)=>s+(Number(v.total)||0),0);
+    const total    = turno.ventas.reduce((s,v)=>s+(Number(v.total)||0),0);
+    const registro = todosTurnos[turno.id] || {};
+    const inicio   = registro.horaInicio || "—";
+    const cierre   = registro.horaCierre || "En curso";
+
     const div = document.createElement("div");
     div.className = "turno-item";
     div.innerHTML =
-      '<div><div class="turno-nombre">Turno '+turno.nombre+'</div><div class="turno-fecha">'+formatFecha(turno.fecha)+'</div></div>' +
-      '<div class="turno-total">$'+total.toLocaleString('es-AR')+'</div>';
-    div.onclick = ()=>verDetalleTurno(turno);
+      '<div>' +
+        '<div class="turno-nombre">Turno ' + turno.nombre + '</div>' +
+        '<div class="turno-meta">' +
+          formatFecha(turno.fecha) + ' &nbsp;·&nbsp; ' +
+          '🕐 ' + inicio + ' → ' + (cierre === "En curso" ? '<span style="color:#7DC47A;">En curso</span>' : cierre) +
+        '</div>' +
+      '</div>' +
+      '<div class="turno-total">$' + total.toLocaleString('es-AR') + '</div>';
+    div.onclick = () => verDetalleTurno(turno, registro);
     contenido.appendChild(div);
   });
 }
@@ -160,13 +187,15 @@ function renderDia(fecha) {
     Object.values(del).forEach(v=>{ if(v.fecha===fecha||v.turnoFecha===fecha) ventasDia.push(v); });
   });
   if(ventasDia.length===0){ contenido.innerHTML="<p style='color:var(--muted);font-size:14px;margin-top:20px;'>Sin ventas el "+formatFecha(fecha)+"</p>"; return; }
-  renderDetalle(ventasDia,"Día "+formatFecha(fecha));
+  renderDetalle(ventasDia,"Día "+formatFecha(fecha), null);
 }
 
-function verDetalleTurno(turno){ renderDetalle(turno.ventas,"Turno "+turno.nombre+" · "+formatFecha(turno.fecha)); }
+function verDetalleTurno(turno, registro) {
+  renderDetalle(turno.ventas, "Turno " + turno.nombre + " · " + formatFecha(turno.fecha), registro);
+}
 
-function renderDetalle(ventas, titulo) {
-  contenido.innerHTML="";
+function renderDetalle(ventas, titulo, registro) {
+  contenido.innerHTML = "";
   let totalGeneral=0, porMozo={}, porMetodo={Efectivo:0,Débito:0,Crédito:0,Transferencia:0}, contadorProductos={};
 
   ventas.forEach(v=>{
@@ -177,7 +206,6 @@ function renderDetalle(ventas, titulo) {
     porMozo[mozo]+=t;
     const m=v.metodoPago||"Efectivo";
     if(porMetodo[m]!==undefined) porMetodo[m]+=t; else porMetodo[m]=t;
-    // Contar productos
     if(Array.isArray(v.productos)){
       v.productos.forEach(p=>{
         if(!contadorProductos[p.nombre]) contadorProductos[p.nombre]=0;
@@ -186,7 +214,6 @@ function renderDetalle(ventas, titulo) {
     }
   });
 
-  // Producto más vendido
   let topProducto=null, topCant=0;
   Object.entries(contadorProductos).forEach(([nom,cant])=>{ if(cant>topCant){topCant=cant;topProducto=nom;} });
 
@@ -195,16 +222,36 @@ function renderDetalle(ventas, titulo) {
   h.innerHTML='<button class="volver-btn" onclick="renderTab()">← Volver</button><div class="titulo-cuadro" style="font-size:16px;">'+titulo+'</div>';
   contenido.appendChild(h);
 
+  // ── Horario del turno ──
+  if(registro){
+    const inicio  = registro.horaInicio || "—";
+    const cierre  = registro.horaCierre || null;
+    const fechaR  = registro.fecha      || "—";
+
+    const hDiv = document.createElement("div");
+    hDiv.className = "turno-horario";
+    hDiv.innerHTML =
+      '<div class="horario-bloque">' +
+        '<div class="horario-label">Apertura</div>' +
+        '<div class="horario-hora">' + inicio + '</div>' +
+        '<div class="horario-fecha">' + formatFecha(fechaR) + '</div>' +
+      '</div>' +
+      '<div class="horario-sep">→</div>' +
+      '<div class="horario-bloque">' +
+        '<div class="horario-label">Cierre</div>' +
+        '<div class="horario-hora" style="' + (!cierre?'color:#7DC47A;font-size:18px;':'') + '">' + (cierre || 'En curso') + '</div>' +
+        (cierre ? '<div class="horario-fecha">' + formatFecha(fechaR) + '</div>' : '') +
+      '</div>';
+    contenido.appendChild(hDiv);
+  }
+
   // Botones exportar
   const expWrap=document.createElement("div");
-  expWrap.innerHTML=
-    '<button class="btn-exportar" onclick="exportarCSV()">📥 Exportar CSV</button>' +
-    '<button class="btn-exportar" onclick="exportarPDF()">🖨️ Imprimir</button>';
+  expWrap.innerHTML='<button class="btn-exportar" onclick="exportarCSV()">📥 Exportar CSV</button><button class="btn-exportar" onclick="exportarPDF()">🖨️ Imprimir</button>';
   contenido.appendChild(expWrap);
 
   // Stats
-  const sg=document.createElement("div");
-  sg.className="stat-grid";
+  const sg=document.createElement("div"); sg.className="stat-grid";
   sg.innerHTML=
     '<div class="stat-card"><div class="stat-num">$'+totalGeneral.toLocaleString('es-AR')+'</div><div class="stat-label">Total vendido</div></div>'+
     '<div class="stat-card"><div class="stat-num">'+ventas.length+'</div><div class="stat-label">Mesas cobradas</div></div>';
@@ -212,15 +259,13 @@ function renderDetalle(ventas, titulo) {
 
   // Top producto
   if(topProducto){
-    const tp=document.createElement("div");
-    tp.className="top-producto";
-    tp.innerHTML='<div class="top-trofeo">🏆</div><div class="top-info"><div class="top-nombre">'+topProducto+'</div><div class="top-cant">Producto más pedido · '+topCant+' unidades</div></div>';
+    const tp=document.createElement("div"); tp.className="top-producto";
+    tp.innerHTML='<div class="top-trofeo">🏆</div><div><div class="top-nombre">'+topProducto+'</div><div class="top-cant">Más pedido · '+topCant+' unidades</div></div>';
     contenido.appendChild(tp);
   }
 
   // Métodos
-  const mh=document.createElement("div");
-  mh.className="seccion-h"; mh.textContent="Por método de pago";
+  const mh=document.createElement("div"); mh.className="seccion-h"; mh.textContent="Por método de pago";
   contenido.appendChild(mh);
   const mg=document.createElement("div"); mg.className="metodos-grid";
   const iconos={Efectivo:"💵",Débito:"💳",Crédito:"🏦",Transferencia:"📲"};
@@ -232,8 +277,7 @@ function renderDetalle(ventas, titulo) {
   contenido.appendChild(mg);
 
   // Mozos
-  const mzh=document.createElement("div");
-  mzh.className="seccion-h"; mzh.textContent="Por mozo";
+  const mzh=document.createElement("div"); mzh.className="seccion-h"; mzh.textContent="Por mozo";
   contenido.appendChild(mzh);
   Object.entries(porMozo).forEach(([mozo,total])=>{
     const row=document.createElement("div"); row.className="mozo-row";
@@ -241,63 +285,64 @@ function renderDetalle(ventas, titulo) {
     contenido.appendChild(row);
   });
 
-  // Guardar datos para exportar
-  window._exportData = { titulo, ventas, totalGeneral, porMozo, porMetodo, topProducto, topCant };
+  // Guardar para exportar
+  window._exportData = { titulo, ventas, totalGeneral, porMozo, porMetodo, topProducto, topCant, registro };
 }
 
-/* ══ EXPORTAR CSV ══ */
 window.exportarCSV = function(){
-  const d = window._exportData;
-  if(!d){ toast("Sin datos para exportar","error"); return; }
-  let csv = "Mesa,Mozo,Total,Método de Pago,Fecha,Hora\n";
-  d.ventas.forEach(v=>{
-    csv += [v.mesa,v.mozo,v.total,v.metodoPago||"",v.fecha||"",v.hora||""].join(",") + "\n";
-  });
-  csv += "\nResumen\n";
-  csv += "Total general,$"+d.totalGeneral+"\n";
-  csv += "Mesas cobradas,"+d.ventas.length+"\n";
-  if(d.topProducto) csv += "Más vendido,"+d.topProducto+" ("+d.topCant+")\n";
-  csv += "\nPor método\n";
+  const d=window._exportData;
+  if(!d){ toast("Sin datos","error"); return; }
+  let csv="Mesa,Mozo,Total,Método de Pago,Fecha,Hora\n";
+  d.ventas.forEach(v=>{ csv+=[v.mesa,v.mozo,v.total,v.metodoPago||"",v.fecha||"",v.hora||""].join(",")+"\n"; });
+  csv+="\nResumen\n";
+  csv+="Total general,$"+d.totalGeneral+"\n";
+  csv+="Mesas cobradas,"+d.ventas.length+"\n";
+  if(d.registro){ csv+="Apertura,"+( d.registro.horaInicio||"—")+"\n"; csv+="Cierre,"+(d.registro.horaCierre||"En curso")+"\n"; }
+  if(d.topProducto) csv+="Más vendido,"+d.topProducto+" ("+d.topCant+")\n";
+  csv+="\nPor método\n";
   Object.entries(d.porMetodo).forEach(([m,t])=>{ if(t>0) csv+=m+",$"+t+"\n"; });
-  csv += "\nPor mozo\n";
+  csv+="\nPor mozo\n";
   Object.entries(d.porMozo).forEach(([m,t])=>{ csv+=m+",$"+t+"\n"; });
-
-  const blob = new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement("a");
+  const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
   a.href=url; a.download="historial_"+d.titulo.replace(/[^a-z0-9]/gi,"_")+".csv";
   a.click(); URL.revokeObjectURL(url);
   toast("CSV descargado ✓","success");
 };
 
-/* ══ IMPRIMIR / PDF ══ */
 window.exportarPDF = function(){
-  const d = window._exportData;
-  if(!d){ toast("Sin datos para exportar","error"); return; }
+  const d=window._exportData;
+  if(!d){ toast("Sin datos","error"); return; }
   const iconos={Efectivo:"💵",Débito:"💳",Crédito:"🏦",Transferencia:"📲"};
   let metodoRows="";
   Object.entries(d.porMetodo).forEach(([m,t])=>{ if(t>0) metodoRows+=`<tr><td>${iconos[m]||""} ${m}</td><td style="text-align:right;font-weight:bold;">$${t.toLocaleString('es-AR')}</td></tr>`; });
   let mozoRows="";
   Object.entries(d.porMozo).forEach(([m,t])=>{ mozoRows+=`<tr><td>👤 ${m}</td><td style="text-align:right;font-weight:bold;">$${t.toLocaleString('es-AR')}</td></tr>`; });
 
+  const horarioHTML = d.registro ?
+    `<div style="display:flex;justify-content:center;gap:30px;border:1px solid #ddd;border-radius:6px;padding:12px;margin:12px 0;text-align:center;">
+      <div><div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">Apertura</div><div style="font-size:24px;font-weight:bold;">${d.registro.horaInicio||"—"}</div></div>
+      <div style="font-size:20px;color:#ccc;line-height:2;">→</div>
+      <div><div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;">Cierre</div><div style="font-size:24px;font-weight:bold;">${d.registro.horaCierre||"En curso"}</div></div>
+    </div>` : "";
+
   const html=`<html><head><style>
     body{font-family:'Courier New',monospace;background:white;color:#111;padding:24px;max-width:480px;margin:auto;}
     h1{font-size:22px;letter-spacing:2px;text-align:center;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:16px;}
-    h2{font-size:14px;letter-spacing:1px;text-transform:uppercase;color:#555;margin:18px 0 8px;}
+    h2{font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#555;margin:18px 0 8px;}
     table{width:100%;border-collapse:collapse;margin-bottom:8px;}
     td{padding:6px 4px;border-bottom:1px dashed #ddd;font-size:14px;}
     .total{font-size:20px;font-weight:bold;text-align:center;padding:14px;border:2px solid #111;border-radius:6px;margin:16px 0;}
     .top{background:#fffbf0;border:1px solid #ddd;border-radius:6px;padding:12px;text-align:center;margin:12px 0;}
-    .top-num{font-size:13px;color:#888;margin-top:4px;}
   </style></head><body>
     <h1>PUEBLO ANSENUZA</h1>
-    <p style="text-align:center;color:#555;font-size:13px;margin-bottom:20px;">${d.titulo}</p>
+    <p style="text-align:center;color:#555;font-size:13px;margin-bottom:16px;">${d.titulo}</p>
+    ${horarioHTML}
     <div class="total">Total: $${d.totalGeneral.toLocaleString('es-AR')}</div>
-    ${d.topProducto?'<div class="top">🏆 <b>'+d.topProducto+'</b><div class="top-num">Más pedido · '+d.topCant+' unidades</div></div>':""}
-    <h2>Por método de pago</h2>
-    <table>${metodoRows}</table>
-    <h2>Por mozo</h2>
-    <table>${mozoRows}</table>
+    ${d.topProducto?'<div class="top">🏆 <b>'+d.topProducto+'</b><br><span style="font-size:12px;color:#888;">Más pedido · '+d.topCant+' unidades</span></div>':""}
+    <h2>Por método de pago</h2><table>${metodoRows}</table>
+    <h2>Por mozo</h2><table>${mozoRows}</table>
     <p style="text-align:center;color:#aaa;font-size:11px;margin-top:24px;">Generado: ${new Date().toLocaleString('es-AR')}</p>
   `;
 
@@ -306,12 +351,11 @@ window.exportarPDF = function(){
   toast("Abriendo para imprimir...","info");
 };
 
-function formatFecha(f) {
+function formatFecha(f){
   if(!f) return "—";
   const [y,m,d]=f.split("-");
   return d+"/"+m+"/"+y;
 }
 </script>
-
 </body>
 </html>

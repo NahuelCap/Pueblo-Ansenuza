@@ -4,6 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pueblo Ansenuza</title>
+
+  <!-- ✅ Ícono para iPhone -->
+  <link rel="apple-touch-icon" href="imagenes/fondo3.png">
+  <link rel="icon" type="image/png" href="imagenes/fondo3.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0F0B08">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ansenuza">
+
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700;900&family=Outfit:wght@300;400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -95,7 +105,6 @@
     @keyframes expandLine{ from { width:0; } to { width:60px; } }
     @keyframes dotPulse  { 0%,100%{ opacity:0.2; transform:scale(0.8); } 50%{ opacity:1; transform:scale(1.2); } }
 
-    /* Fade out antes de redirigir */
     .fade-out { animation: fadeOut 0.5s ease forwards; }
     @keyframes fadeOut { to { opacity:0; transform:scale(1.03); } }
   </style>

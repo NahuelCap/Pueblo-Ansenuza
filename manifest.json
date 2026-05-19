@@ -2,11 +2,11 @@
   "name": "Pueblo Ansenuza",
   "short_name": "Ansenuza",
   "description": "App del restaurante Pueblo Ansenuza",
-  "start_url": "/Pueblo-Ansenuza/index.html",
+  "start_url": "/Pueblo-Ansenuza/splash.html",
   "scope": "/Pueblo-Ansenuza/",
   "display": "standalone",
-  "background_color": "#231a12",
-  "theme_color": "#231a12",
+  "background_color": "#0F0B08",
+  "theme_color": "#0F0B08",
   "icons": [
     {
       "src": "/Pueblo-Ansenuza/imagenes/fondo3.png",
